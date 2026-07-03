@@ -1,0 +1,124 @@
+.tl-card-header-host {
+    display: block !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+    padding: 20px 24px !important;
+    border-bottom: 1px solid #f1f5f9 !important;
+
+    .tl-card-header-wrapper {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        width: 100%;
+    }
+
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
+        margin: 0 !important;
+        color: #0f172a !important;
+        font-weight: 600 !important;
+        line-height: 1.4 !important;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    }
+
+
+    h1 {
+        font-size: 24px !important;
+    }
+
+    h2 {
+        font-size: 21px !important;
+    }
+
+    h3 {
+        font-size: 18px !important;
+    }
+
+    // Kích thước tiêu chuẩn đẹp nhất cho Card
+    h4 {
+        font-size: 16px !important;
+    }
+
+    h5 {
+        font-size: 15px !important;
+    }
+
+    h6 {
+        font-size: 14px !important;
+    }
+
+
+    p,
+    small {
+        margin: 6px 0 0 0 !important;
+        color: #64748b !important;
+        font-size: 13px !important;
+        font-weight: 400 !important;
+        display: block !important;
+    }
+}
+
+
+.tl-card-content-host {
+    display: block !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+    padding: 24px !important;
+    color: #334155 !important;
+    font-size: 14px !important;
+    line-height: 1.6 !important;
+    flex: 1 !important;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+
+    p {
+        margin: 0 0 12px 0;
+
+        &:last-child {
+            margin-bottom: 0;
+        }
+    }
+}
+
+
+.tl-card-footer-host {
+    display: flex !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+    align-items: center !important;
+    justify-content: flex-end !important;
+    gap: 12px !important;
+    padding: 16px 24px !important;
+    background-color: #f8fafc !important;
+    border-top: 1px solid #f1f5f9 !important;
+}
+
+:host {
+    display: block;
+    width: 100%;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+
+    ::ng-deep {
+        tl-card {
+            display: flex;
+            flex-direction: column;
+            background-color: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05), 0 1px 2px rgba(0, 0, 0, 0.03);
+            overflow: hidden;
+            transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1),
+                box-shadow 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            width: 100%;
+            box-sizing: border-box;
+
+            &:hover {
+                transform: translateY(-6px) !important;
+                box-shadow: 0 12px 20px -3px rgba(0, 0, 0, 0.08), 0 4px 12px -4px rgba(0, 0, 0, 0.08) !important;
+            }
+        }
+    }
+}

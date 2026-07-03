@@ -1,0 +1,213 @@
+<div
+  class="tl-table-wrapper"
+  [style.width]="width"
+  [style.max-width]="width"
+  style="position: relative"
+  role="region"
+  [attr.aria-label]="'Table container for ' + emptyMessage"
+>
+  @if (loading) {
+    <div
+      class="tl-table-loading-overlay"
+      role="status"
+      aria-live="polite"
+      style="
+        position: absolute;
+        inset: 0;
+        background: rgba(255, 255, 255, 0.7);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 10;
+      "
+    >
+      <div
+        class="tl-spinner"
+        style="
+          width: 32px;
+          height: 32px;
+          border: 3px solid #e2e8f0;
+          border-top-color: #3b82f6;
+          border-radius: 50%;
+          animation: tl-spin 0.8s linear infinite;
+        "
+      ></div>
+      <span class="sr-only">Đang tải dữ liệu, vui lòng đợi...</span>
+    </div>
+  }
+
+  <table class="tl-native-table" role="grid">
+    <thead>
+      <tr role="row">
+        @for (col of columnDefs; track col.name) {
+          <th
+            role="columnheader"
+            [style.width]="col.width"
+            [style.min-width]="col.width"
+            [style.text-align]="col.align"
+            [class.tl-sortable-header]="col.sortable"
+            [attr.aria-sort]="
+              sortState.key === col.name
+                ? sortState.order === 'asc'
+                  ? 'ascending'
+                  : 'descending'
+                : 'none'
+            "
+            [attr.tabindex]="col.sortable ? 0 : null"
+            (click)="sort(col.name, col.sortable)"
+            (keydown.enter)="$event.preventDefault(); sort(col.name, col.sortable)"
+            (keydown.space)="$event.preventDefault(); sort(col.name, col.sortable)"
+          >
+            <div
+              class="tl-header-cell-content"
+              [style.justify-content]="
+                col.align === 'center'
+                  ? 'center'
+                  : col.align === 'right'
+                    ? 'flex-end'
+                    : 'flex-start'
+              "
+            >
+              @if (col.headerCell) {
+                <ng-container [ngTemplateOutlet]="col.headerCell.templateRef"></ng-container>
+              } @else {
+                <span>{{ col.name }}</span>
+              }
+
+              @if (col.sortable) {
+                <span class="tl-sort-icon" aria-hidden="true">
+                  {{ sortState.key === col.name ? (sortState.order === 'asc' ? '🔼' : '🔽') : '↕' }}
+                </span>
+                <span class="sr-only">
+                  {{ col.name }}, nút bấm sắp xếp.
+                  {{
+                    sortState.key === col.name
+                      ? 'Đang sắp xếp ' + (sortState.order === 'asc' ? 'tăng dần' : 'giảm dần')
+                      : 'Chưa sắp xếp'
+                  }}
+                </span>
+              }
+            </div>
+          </th>
+        }
+      </tr>
+    </thead>
+
+    <tbody>
+      @for (row of pagedData; track trackBy($index, row)) {
+        <tr role="row">
+          @for (col of columnDefs; track col.name) {
+            <td
+              role="gridcell"
+              [style.width]="col.width"
+              [style.min-width]="col.width"
+              [style.text-align]="col.align"
+              [class.tl-cell-truncate]="col.truncate && !col.cell"
+              [tlTruncateTooltip]="col.truncate && !col.cell"
+              [tooltipText]="$any(row[col.name]) || ''"
+            >
+              @if (col.cell) {
+                <ng-container
+                  [ngTemplateOutlet]="col.cell.templateRef"
+                  [ngTemplateOutletContext]="{ $implicit: row }"
+                ></ng-container>
+              } @else {
+                <span class="tl-cell-default-text">{{ row[col.name] }}</span>
+              }
+            </td>
+          }
+        </tr>
+      } @empty {
+        <tr role="row">
+          <td
+            [attr.colspan]="columnDefs.length"
+            class="tl-table-empty-state"
+            role="gridcell"
+            aria-live="polite"
+          >
+            {{ emptyMessage }}
+          </td>
+        </tr>
+      }
+    </tbody>
+  </table>
+
+  @if (pagination && dataSource.length > 0) {
+    <div
+      class="tl-table-pagination-bar"
+      role="navigation"
+      aria-label="Thanh điều hướng phân trang"
+      aria-live="polite"
+    >
+      <div class="tl-page-size-selector">
+        <label [attr.for]="'tl-size-select-' + currentPage" class="tl-label">Items per page:</label>
+        <select
+          [attr.id]="'tl-size-select-' + currentPage"
+          (change)="onPageSizeChange($event)"
+          [value]="pageSize"
+          aria-label="Chọn số lượng dòng hiển thị trên mỗi trang"
+        >
+          @for (option of pageSizeOptions; track option) {
+            <option [value]="option">{{ option }}</option>
+          }
+        </select>
+      </div>
+
+      <div class="tl-page-navigation">
+        <span class="tl-page-info">
+          {{ (currentPage - 1) * pageSize + 1 }} –
+          {{
+            currentPage * pageSize > (serverSide ? totalRecords : dataSource.length)
+              ? serverSide
+                ? totalRecords
+                : dataSource.length
+              : currentPage * pageSize
+          }}
+          of {{ serverSide ? totalRecords : dataSource.length }}
+        </span>
+
+        <div class="tl-page-buttons-group" role="group" aria-label="Các nút chuyển trang">
+          <button
+            class="tl-page-btn"
+            [disabled]="currentPage === 1"
+            [attr.aria-disabled]="currentPage === 1"
+            (click)="goToPage(1)"
+            aria-label="Về trang đầu tiên"
+          >
+            <span class="tl-mat-icon" aria-hidden="true">‹‹</span>
+          </button>
+
+          <button
+            class="tl-page-btn"
+            [disabled]="currentPage === 1"
+            [attr.aria-disabled]="currentPage === 1"
+            (click)="goToPage(currentPage - 1)"
+            aria-label="Về trang trước"
+          >
+            <span class="tl-mat-icon" aria-hidden="true">‹</span>
+          </button>
+
+          <button
+            class="tl-page-btn"
+            [disabled]="currentPage === totalPages"
+            [attr.aria-disabled]="currentPage === totalPages"
+            (click)="goToPage(currentPage + 1)"
+            aria-label="Sang trang sau"
+          >
+            <span class="tl-mat-icon" aria-hidden="true">›</span>
+          </button>
+
+          <button
+            class="tl-page-btn"
+            [disabled]="currentPage === totalPages"
+            [attr.aria-disabled]="currentPage === totalPages"
+            (click)="goToPage(totalPages)"
+            aria-label="Đến trang cuối cùng"
+          >
+            <span class="tl-mat-icon" aria-hidden="true">››</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  }
+</div>

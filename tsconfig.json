@@ -3,6 +3,9 @@
 {
   "compileOnSave": false,
   "compilerOptions": {
+    "paths": {
+      "@tl/ui": ["./dist/tl/ui", "./dist/tl/ui/index.d.ts"]
+    },
     "strict": true,
     "noImplicitOverride": true,
     "noPropertyAccessFromIndexSignature": true,
@@ -21,5 +24,19 @@
     "strictInputAccessModifiers": true,
     "strictTemplates": true
   },
-  "files": []
+  "files": [],
+  "references": [
+    {
+      "path": "./libs/tl/ui/tsconfig.lib.json"
+    },
+    {
+      "path": "./libs/tl/ui/tsconfig.spec.json"
+    },
+    {
+      "path": "./libs/demo-app/tsconfig.app.json"
+    },
+    {
+      "path": "./libs/demo-app/tsconfig.spec.json"
+    }
+  ]
 }

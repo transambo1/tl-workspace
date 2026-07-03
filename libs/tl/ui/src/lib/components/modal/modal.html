@@ -1,0 +1,18 @@
+@if (isOpen) {
+  <div class="tl-modal-backdrop" (click)="onBackdropClick($event)">
+    <div class="tl-modal-container" [class]="'size-' + size">
+      <div class="tl-modal-header">
+        <h3 class="tl-modal-title">{{ title }}</h3>
+        <button class="tl-modal-close-btn" (click)="closeModal()">✕</button>
+      </div>
+
+      <div class="tl-modal-body">
+        <ng-content></ng-content>
+      </div>
+
+      <div class="tl-modal-footer">
+        <ng-content select="[footer]"></ng-content>
+      </div>
+    </div>
+  </div>
+}

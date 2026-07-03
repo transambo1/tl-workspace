@@ -1,0 +1,44 @@
+<div class="tl-tabs-container" [ngClass]="position">
+  <div class="tl-tabs-nav-bar">
+    @for (tab of tabItems; track $index) {
+      <div
+        #tabHeader
+        class="tl-tabs-header-item"
+        [class.active]="activeTabIndex === $index"
+        [class.disabled]="tab.disabled"
+        (click)="selectTab($index, tab.disabled)"
+      >
+        @if (tab.customLabel) {
+          <ng-container [ngTemplateOutlet]="tab.customLabel.templateRef"></ng-container>
+        } @else {
+          {{ tab.label }}
+        }
+      </div>
+    }
+
+    <div
+      class="tl-tabs-ink-bar"
+      [style.width.px]="inkBarWidth"
+      [style.height.px]="inkBarHeight"
+      [style.transform]="
+        position === 'top' || position === 'bottom'
+          ? 'translateX(' + inkBarLeft + 'px)'
+          : 'translateY(' + inkBarTop + 'px)'
+      "
+    ></div>
+  </div>
+
+  <div class="tl-tabs-content-viewport">
+    @for (tab of tabItems; track $index) {
+      @if (activeTabIndex === $index) {
+        <div class="tl-tabs-content-pane">
+          @if (tab.lazyContent) {
+            <ng-container [ngTemplateOutlet]="tab.lazyContent.templateRef"></ng-container>
+          } @else {
+            <ng-container [ngTemplateOutlet]="tab.contentTemplate"></ng-container>
+          }
+        </div>
+      }
+    }
+  </div>
+</div>

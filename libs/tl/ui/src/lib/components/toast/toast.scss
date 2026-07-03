@@ -1,0 +1,171 @@
+:host {
+    position: fixed;
+    z-index: 9999;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    max-width: 400px;
+    width: calc(100% - 40px);
+    pointer-events: none;
+
+    // 🎨 HỆ THỐNG BIẾN CSS MÀU SẮC MẶC ĐỊNH (Bảng màu chuẩn toàn cầu)
+    --tl-toast-bg: #ffffff;
+    --tl-toast-text-color: #1e293b;
+    --tl-toast-close-color: #94a3b8;
+    --tl-toast-close-hover-color: #64748b;
+
+    --tl-toast-success-color: #10b981; // Xanh lục nhạt chuẩn chỉnh hơn
+    --tl-toast-error-color: #ef4444;
+    --tl-toast-info-color: #3b82f6;
+    --tl-toast-warning-color: #f59e0b;
+
+    // Định vị 4 góc toàn cục
+    &.top-right {
+        top: 20px;
+        right: 20px;
+    }
+
+    &.top-left {
+        top: 20px;
+        left: 20px;
+    }
+
+    &.bottom-right {
+        bottom: 20px;
+        right: 20px;
+        flex-direction: column-reverse;
+    }
+
+    &.bottom-left {
+        bottom: 20px;
+        left: 20px;
+        flex-direction: column-reverse;
+    }
+
+    .tl-toast-item {
+        pointer-events: auto;
+        display: flex;
+        align-items: center;
+        padding: 14px 16px;
+        border-radius: 8px;
+        background-color: var(--tl-toast-bg);
+        color: var(--tl-toast-text-color);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        font-family: sans-serif;
+        font-size: 14px;
+        animation: toastSlideIn 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
+
+        // 🌟 ÁP DỤNG ĐỘNG CÁC BIẾN MÀU THEO CLASS TYPE
+        &.success {
+            border-left: 4px solid var(--tl-toast-success-color);
+
+            .tl-toast-icon {
+                background-color: var(--tl-toast-success-color);
+            }
+        }
+
+        &.error {
+            border-left: 4px solid var(--tl-toast-error-color);
+
+            .tl-toast-icon {
+                background-color: var(--tl-toast-error-color);
+            }
+        }
+
+        &.info {
+            border-left: 4px solid var(--tl-toast-info-color);
+
+            .tl-toast-icon {
+                background-color: var(--tl-toast-info-color);
+            }
+        }
+
+        &.warning {
+            border-left: 4px solid var(--tl-toast-warning-color);
+
+            .tl-toast-icon {
+                background-color: var(--tl-toast-warning-color);
+            }
+        }
+    }
+
+    .tl-toast-icon {
+        margin-right: 12px;
+        font-size: 16px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 24px;
+        height: 24px;
+        border-radius: 50%;
+        color: #fff;
+        font-weight: bold;
+    }
+
+    .tl-toast-message {
+        flex: 1;
+        line-height: 1.4;
+        padding-right: 10px;
+    }
+
+    .tl-toast-close {
+        border: none;
+        background: transparent;
+        color: var(--tl-toast-close-color);
+        cursor: pointer;
+        font-size: 14px;
+        padding: 4px;
+        transition: color 0.2s;
+
+        &:hover {
+            color: var(--tl-toast-close-hover-color);
+        }
+    }
+}
+
+.tl-toast-clear-all-wrapper {
+    display: flex;
+    justify-content: flex-end;
+    width: 100%;
+    margin-bottom: 4px;
+    animation: toastSlideIn 0.2s ease-out;
+    pointer-events: auto; // Bật chuột để bấm được nút
+
+    .tl-toast-btn-clear-all {
+        background: rgba(255, 255, 255, 0.95);
+        border: 1px solid #e2e8f0;
+        padding: 6px 14px;
+        border-radius: 20px;
+        font-size: 11px;
+        font-weight: 600;
+        color: #64748b;
+        cursor: pointer;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+        transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+
+        &:hover {
+            color: #ef4444;
+            border-color: #fca5a5;
+            background-color: #fff;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(239, 68, 68, 0.1);
+        }
+
+        &:active {
+            transform: translateY(0);
+        }
+    }
+}
+
+
+@keyframes toastSlideIn {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}

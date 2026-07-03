@@ -1,0 +1,76 @@
+/* Bọc ngoài để định vị icon */
+.tl-input-wrapper {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+/* 1. Base Style - Khung xương chuẩn 8pt */
+[tl-input] {
+    width: 100%;
+    height: 40px;
+    /* Khớp với size Medium của Button */
+    padding: 8px 12px;
+    font-size: 14px;
+    border: 1.5px solid #dcdfe6;
+    border-radius: 4px;
+    background-color: #fff;
+    color: #333;
+    transition: all 0.2s ease-in-out;
+    outline: none;
+    box-sizing: border-box;
+    padding-right: 40px;
+
+    &::placeholder {
+        color: #c0c4cc;
+    }
+
+    /* 2. Trạng thái Focus - Hiệu ứng màu đỏ thương hiệu */
+    &:focus {
+        border-color: #1d49fa;
+        box-shadow: 0 0 0 2px rgba(41, 98, 255, 0.1);
+    }
+
+    /* 3. Trạng thái Disabled */
+    &:disabled {
+        background-color: #f5f7fa;
+        color: #c0c4cc;
+        cursor: not-allowed;
+        border-color: #e4e7ed;
+    }
+
+    /* 4. ĐỈNH CAO: Tự động đổi màu khi có lỗi (Validation) */
+    /* Angular tự dán class .ng-invalid và .ng-touched vào khi form có lỗi */
+    &.ng-invalid.ng-touched {
+        border-color: #f56c6c;
+
+        &:focus {
+            box-shadow: 0 0 0 2px rgba(245, 108, 108, 0.2);
+        }
+    }
+}
+
+.tl-input-suffix {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    color: #c0c4cc;
+
+    &:hover {
+        color: #cc0700;
+    }
+}
+
+.tl-input-label {
+    font-size: 14px;
+    font-weight: 500;
+    color: #606266;
+}
+
+.tl-input-hint {
+    font-size: 12px;
+    color: #909399;
+}

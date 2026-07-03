@@ -1,0 +1,139 @@
+// Biến màu sắc để đồng bộ với Button/Input của chú
+$primary-color: #2ac2d5; // Màu xanh David Platform
+$border-color: #dee2e6;
+$text-color: #333;
+$bg-white: #ffffff;
+
+.tl-select-wrapper {
+    position: relative; // Để cái dropdown "con" căn theo cái này
+    width: 100%;
+    font-family: sans-serif;
+}
+
+.tl-select-label {
+    display: block;
+    margin-bottom: 6px;
+    font-size: 14px;
+    font-weight: 500;
+    color: #606266;
+}
+
+.tl-select-trigger {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 12px;
+    background-color: $bg-white;
+    border: 1px solid $border-color;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+
+    &:hover {
+        border-color: darken($border-color, 10%);
+    }
+
+    &.is-open {
+        border-color: $primary-color;
+        box-shadow: 0 0 0 2px rgba($primary-color, 0.2);
+
+        .tl-select-arrow {
+            transform: rotate(180deg); // Xoay mũi tên lên khi mở
+        }
+    }
+}
+
+.tl-select-display-value {
+    font-size: 14px;
+    color: $text-color;
+
+    &.placeholder {
+        color: #999;
+    }
+}
+
+.tl-select-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.tl-select-clear {
+    color: #999;
+    font-size: 14px;
+    cursor: pointer;
+    opacity: 1;
+    transition: opacity 0.2s;
+
+    &:hover {
+        color: #ff9999;
+    }
+
+    &.is-hidden {
+        visibility: hidden;
+        opacity: 0;
+        pointer-events: none;
+    }
+}
+
+.tl-select-arrow {
+    font-size: 10px;
+    color: #999;
+    transition: transform 0.2s ease;
+}
+
+.tl-select-dropdown {
+    position: absolute; // Làm cho nó "bay" lên trên các thành phần khác
+    top: calc(100% + 4px);
+    left: 0;
+    width: 100%;
+    max-height: 250px; // Giới hạn chiều cao nếu nhiều option
+    overflow-y: auto; // Hiện thanh cuộn nếu quá dài
+    background-color: $bg-white;
+    border: 1px solid $border-color;
+    border-radius: 4px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    z-index: 1000; // Đảm bảo không bị các thẻ khác đè lên
+    margin: 0;
+    padding: 4px 0;
+    list-style: none;
+}
+
+.tl-select-option {
+    padding: 10px 12px;
+    font-size: 14px;
+    color: $text-color;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+    transition: background 0.2s;
+
+    &:hover {
+        background-color: #f5f7fa;
+    }
+
+    &.active {
+        color: $primary-color;
+        font-weight: 600;
+        background-color: rgba($primary-color, 0.05);
+    }
+
+    &.disabled {
+        color: #c0c4cc;
+        cursor: not-allowed;
+        background-color: #fff;
+    }
+}
+
+.tl-select-check {
+    font-size: 12px;
+    color: $primary-color;
+}
+
+.tl-select-empty {
+    padding: 10px 12px;
+    font-size: 14px;
+    color: #999;
+    text-align: center;
+}

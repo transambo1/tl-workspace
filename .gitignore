@@ -42,3 +42,7 @@ __screenshots__/
 # System files
 .DS_Store
 Thumbs.db
+
+# Ignore the demo app project folder
+/projects/demo-app/
+/libs/demo-app/
