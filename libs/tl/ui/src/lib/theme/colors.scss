@@ -1,0 +1,110 @@
+// libs/tl/ui/src/lib/theme/_colors.scss
+
+// ==========================================================================
+// 1. PRIMARY PALETTE (BRAND COLORS - BLUE)
+// ==========================================================================
+$tl-blue-50: #eff6ff;
+$tl-blue-100: #dbeafe;
+$tl-blue-200: #bfdbfe;
+$tl-blue-300: #93c5fd;
+$tl-blue-400: #60a5fa;
+$tl-blue-500: #3b82f6;
+$tl-blue-600: #2563eb;
+$tl-blue-700: #1d4ed8;
+$tl-blue-800: #1e40af;
+$tl-blue-900: #1e3a8a;
+
+// Xanh tím 
+$tl-indigo-50: #e0e7ff;
+$tl-indigo-100: #c7d2fe;
+$tl-indigo-200: #a5b4fc;
+$tl-indigo-300: #818cf8;
+$tl-indigo-400: #6366f1;
+$tl-indigo-500: #4f46e5;
+$tl-indigo-600: #4338ca;
+$tl-indigo-700: #3730a3;
+$tl-indigo-800: #312e81;
+$tl-indigo-900: #1e1b4b;
+
+// Tím hồng
+$tl-violet-50: #f5f3ff;
+$tl-violet-100: #ede9fe;
+$tl-violet-200: #ddd6fe;
+$tl-violet-300: #c4b5fd;
+$tl-violet-400: #a78bfa;
+$tl-violet-500: #8b5cf6;
+$tl-violet-600: #7c3aed;
+$tl-violet-700: #6d28d9;
+$tl-violet-800: #5b21b6;
+$tl-violet-900: #4c1d95;
+
+// Hồng 
+$tl-pink-50: #fdf2f8;
+$tl-pink-100: #fce7f3;
+$tl-pink-200: #fbcfe8;
+$tl-pink-300: #f472b6;
+$tl-pink-400: #f472b6;
+$tl-pink-500: #ec4899;
+$tl-pink-600: #db2777;
+$tl-pink-700: #be185d;
+$tl-pink-800: #9d174d;
+$tl-pink-900: #831843;
+// ==========================================================================
+// 2. NEUTRAL PALETTE (GRAYS - TEXT, BACKGROUND, BORDERS)
+// ==========================================================================
+$tl-slate-50: #f8fafc;
+$tl-slate-100: #f1f5f9;
+$tl-slate-200: #e2e8f0;
+$tl-slate-300: #cbd5e1;
+$tl-slate-400: #94a3b8;
+$tl-slate-500: #64748b;
+$tl-slate-600: #475569;
+$tl-slate-700: #334155;
+$tl-slate-800: #1e293b;
+$tl-slate-900: #0f172a;
+
+// ==========================================================================
+// 3. SEMANTIC PALETTE (STATUS COLORS)
+// ==========================================================================
+
+// Success (Green)
+$tl-emerald-50: #ecfdf5;
+$tl-emerald-100: #d1fae5;
+$tl-emerald-200: #a7f3d0;
+$tl-emerald-300: #6ee7b7;
+$tl-emerald-400: #34d399;
+$tl-emerald-500: #10b981;
+$tl-emerald-600: #059669;
+$tl-emerald-700: #047857;
+$tl-emerald-800: #065f46;
+$tl-emerald-900: #064e3b;
+
+// Warning (Amber/Yellow)
+$tl-amber-50: #fffbeb;
+$tl-amber-100: #fef3c7;
+$tl-amber-200: #fde68a;
+$tl-amber-300: #fcd34d;
+$tl-amber-400: #fbbf24;
+$tl-amber-500: #f59e0b;
+$tl-amber-600: #d97706;
+$tl-amber-700: #b45309;
+$tl-amber-800: #92400e;
+$tl-amber-900: #78350f;
+
+// Error / Danger (Red)
+$tl-rose-50: #fff1f2;
+$tl-rose-100: #ffe4e6;
+$tl-rose-200: #fecdd3;
+$tl-rose-300: #fda4af;
+$tl-rose-400: #fb7185;
+$tl-rose-500: #f43f5e;
+$tl-rose-600: #e11d48;
+$tl-rose-700: #be123c;
+$tl-rose-800: #9f1239;
+$tl-rose-900: #881337;
+
+// Info (Cyan/Sky)
+$tl-sky-50: #f0f9ff;
+$tl-sky-500: #0ea5e9;
+$tl-sky-600: #0284c7;
+$tl-sky-700: #0369a1;

@@ -1,0 +1,221 @@
+@import 'index';
+
+.tl-table-wrapper {
+    @include custom-scrollbar;
+    width: 100%;
+    overflow-x: auto;
+    border: 1px solid var(--tl-sys-border);
+    border-radius: var(--tl-sys-radius-lg);
+    background: var(--tl-sys-surface);
+    box-shadow: var(--tl-sys-shadow-sm);
+    margin-top: 16px;
+    position: relative;
+    -webkit-overflow-scrolling: touch;
+}
+
+.tl-native-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    font-size: $tl-font-size-sm;
+    font-family: $tl-font-family;
+
+    // 🔥 KHÓA CỨNG FIXED: Bắt buộc trình duyệt tính toán theo width của Directive để kích hoạt truncate dấu ba chấm
+    table-layout: fixed;
+
+    thead {
+        background: var(--tl-sys-surface-muted);
+
+        th {
+            padding: 12px 16px;
+            font-weight: $tl-font-weight-semibold;
+            color: var(--tl-sys-text-body);
+            white-space: nowrap;
+            box-sizing: border-box;
+            border-bottom: 1px solid var(--tl-sys-border);
+
+            &.tl-sortable-header {
+                @include sys-transition(all);
+                cursor: pointer;
+                user-select: none;
+
+                &:hover {
+                    background-color: var(--tl-sys-border);
+                    color: var(--tl-sys-text-main);
+                }
+            }
+
+            .tl-header-cell-content {
+                @include flex-y-center;
+                gap: 6px;
+                width: 100%;
+                // Để trống justify-content để nó tự động ăn theo text-align của thẻ cha th
+            }
+        }
+    }
+
+    tbody {
+        tr {
+            @include sys-transition(background-color);
+
+            &:last-child td {
+                border-bottom: none;
+            }
+
+            &:hover {
+                background: var(--tl-sys-surface-muted);
+            }
+        }
+
+        td {
+            padding: 12px 16px;
+            color: var(--tl-sys-text-body);
+            vertical-align: middle;
+            box-sizing: border-box;
+            border-bottom: 1px solid var(--tl-sys-border);
+
+            // 🔥 VÁ LỖI DẠT TRÁI: Ép ô dữ liệu td bên dưới phải tuân thủ hướng căn lề thừa kế từ Directive truyền xuống HTML
+            text-align: inherit;
+        }
+    }
+}
+
+/* ==========================================================================
+   TRANG THAI 1 & 2: RE-CLEAN CHẠY CẮT CHỮ TRUNCATE CHUẨN ĐÉT
+   ========================================================================== */
+.tl-cell-truncate {
+    max-width: 0;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+
+    // Ép các text lồng từ ngoài app truyền vào qua ng-template cũng phải tuân thủ cắt chữ inline
+    * {
+        display: inline !important;
+        white-space: nowrap !important;
+        overflow: hidden !important;
+        text-overflow: ellipsis !important;
+    }
+
+    .tl-cell-default-text {
+        display: block;
+        width: 100%;
+        @include text-ellipsis;
+    }
+}
+
+.tl-sort-icon {
+    @include sys-transition(color);
+    flex-shrink: 0;
+    font-size: 11px;
+    color: var(--tl-sys-text-disabled);
+}
+
+.tl-table-empty-state {
+    padding: 48px;
+    text-align: center;
+    color: var(--tl-sys-text-muted);
+    font-size: $tl-font-size-sm;
+}
+
+/* ==========================================================================
+   GIAO DIEN PAGINATION BAR INTERNALLY
+   ========================================================================== */
+.tl-table-pagination-bar {
+    @include flex-y-center;
+    justify-content: flex-end;
+    gap: 32px;
+    padding: 12px 16px;
+    background-color: var(--tl-sys-surface);
+    border-top: 1px solid var(--tl-sys-border);
+    font-size: $tl-font-size-xs;
+    color: var(--tl-sys-text-body);
+    user-select: none;
+}
+
+.tl-page-size-selector {
+    @include flex-y-center;
+    gap: 8px;
+
+    .tl-label {
+        color: var(--tl-sys-text-muted);
+    }
+
+    select {
+        @include sys-transition(border-color);
+        padding: 2px 4px;
+        border: none;
+        border-bottom: 1px solid var(--tl-sys-border);
+        background-color: transparent;
+        color: var(--tl-sys-text-main);
+        outline: none;
+        cursor: pointer;
+        font-size: $tl-font-size-xs;
+        font-weight: $tl-font-weight-medium;
+
+        &:focus {
+            border-bottom-color: var(--tl-sys-primary);
+        }
+    }
+}
+
+.tl-page-navigation {
+    @include flex-y-center;
+    gap: 24px;
+
+    .tl-page-info {
+        color: var(--tl-sys-text-main);
+    }
+}
+
+.tl-page-buttons-group {
+    @include flex-y-center;
+    gap: 6px;
+}
+
+.tl-page-btn {
+    @include flex-center;
+    @include sys-transition(all);
+    width: 32px;
+    height: 32px;
+    border: none;
+    border-radius: var(--tl-sys-radius-full);
+    background-color: transparent;
+    color: var(--tl-sys-text-body);
+    cursor: pointer;
+
+    &:hover:not(:disabled) {
+        background-color: var(--tl-sys-surface-muted);
+        color: var(--tl-sys-text-main);
+    }
+
+    &:disabled {
+        @include disabled-state;
+        color: var(--tl-sys-text-disabled);
+    }
+
+    .tl-mat-icon {
+        font-size: 14px;
+        font-weight: $tl-font-weight-bold;
+        line-height: 1;
+    }
+}
+
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}
+
+.tl-sortable-header:focus,
+.tl-page-btn:focus,
+select:focus {
+    outline: 2px solid var(--tl-sys-primary);
+    outline-offset: 2px;
+}

@@ -1,0 +1,70 @@
+// libs/tl/ui/src/lib/theme/_variables.scss
+@import 'colors';
+@import 'typography';
+
+:root {
+    // ==========================================================================
+    // 1. BRAND & SYSTEM COLORS (Màu chủ đạo & Hệ thống)
+    // ==========================================================================
+    --tl-sys-primary: #{$tl-blue-500};
+    --tl-sys-primary-hover: #{$tl-blue-600};
+    --tl-sys-primary-active: #{$tl-blue-700};
+    --tl-sys-primary-light: #{$tl-blue-50};
+
+    // ==========================================================================
+    // 2. NEUTRAL SURFACE COLORS (Màu nền & Phân cấp khối)
+    // ==========================================================================
+    --tl-sys-bg: #{$tl-slate-50};
+    --tl-sys-surface: #ffffff;
+    --tl-sys-surface-muted: #{$tl-slate-100};
+
+    // ==========================================================================
+    // 3. TEXT & BORDER COLORS (Màu chữ & Viền đường kẻ)
+    // ==========================================================================
+    --tl-sys-text-main: #{$tl-slate-900};
+    --tl-sys-text-body: #{$tl-slate-700};
+    --tl-sys-text-muted: #{$tl-slate-500};
+    --tl-sys-text-disabled: #{$tl-slate-400};
+    --tl-sys-border: #{$tl-slate-200};
+    --tl-sys-border-hover: #{$tl-slate-400};
+
+    // ==========================================================================
+    // 4. SEMANTIC STATUS COLORS (Màu sắc theo trạng thái logic)
+    // ==========================================================================
+    // Success (Thành công - Ví dụ: Toast Success, Badge Active)
+    --tl-sys-success: #{$tl-emerald-500};
+    --tl-sys-success-hover: #{$tl-emerald-600};
+    --tl-sys-success-light: #{$tl-emerald-50};
+
+    // Warning (Cảnh báo - Ví dụ: Modal xác nhận xóa, Alert)
+    --tl-sys-warning: #{$tl-amber-500};
+    --tl-sys-warning-hover: #{$tl-amber-600};
+    --tl-sys-warning-light: #{$tl-amber-50};
+
+    // Error / Danger (Lỗi / Nguy hiểm - Ví dụ: Input báo đỏ, Button Xóa)
+    --tl-sys-error: #{$tl-rose-500};
+    --tl-sys-error-hover: #{$tl-rose-600};
+    --tl-sys-error-light: #{$tl-rose-50};
+
+    // ==========================================================================
+    // 5. BORDERS & RADII (Độ bo góc của các Component)
+    // ==========================================================================
+    --tl-sys-radius-sm: 4px; // Bo góc nhỏ: Badge, Checkbox
+    --tl-sys-radius-md: 6px; // Bo góc vừa: Button, Input
+    --tl-sys-radius-lg: 8px; // Bo góc lớn: Card, Toast
+    --tl-sys-radius-xl: 12px; // Bo góc siêu lớn: Modal
+    --tl-sys-radius-full: 9999px; // Bo góc tròn xoe: Avatar, Pill button
+
+    // ==========================================================================
+    // 6. ELEVATIONS & SHADOWS (Độ đổ bóng tạo chiều sâu đổ khối)
+    // ==========================================================================
+    --tl-sys-shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05); // Dạt cho Button, Input
+    --tl-sys-shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1); // Dùng cho Card, Toast
+    --tl-sys-shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1); // Dùng cho Modal, Dropdown menu
+
+    // ==========================================================================
+    // 7. TRANSITIONS & ANIMATIONS (Cấu hình hiệu ứng mượt mà)
+    // ==========================================================================
+    --tl-sys-motion-duration: 0.2s;
+    --tl-sys-motion-ease: cubic-bezier(0.4, 0, 0.2, 1);
+}

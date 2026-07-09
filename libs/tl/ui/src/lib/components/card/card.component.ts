@@ -6,7 +6,7 @@ import { CommonModule } from '@angular/common';
   standalone: true,
   imports: [CommonModule],
   template: `<ng-content></ng-content>`,
-  styleUrl: './card.scss',
+  styleUrl: './card.component.scss',
   encapsulation: ViewEncapsulation.None,
 })
 export class TlCardComponent {}

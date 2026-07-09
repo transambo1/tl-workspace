@@ -1,0 +1,142 @@
+@import 'index';
+
+.tl-select-wrapper {
+    position: relative;
+    width: 100%;
+    font-family: $tl-font-family;
+}
+
+.tl-select-label {
+    display: block;
+    margin-bottom: 6px;
+    font-size: $tl-font-size-sm;
+    font-weight: $tl-font-weight-medium;
+    color: var(--tl-sys-text-body);
+}
+
+.tl-select-trigger {
+    @include flex-y-center;
+    @include sys-transition(all);
+    justify-content: space-between;
+    padding: 10px 12px;
+    background-color: var(--tl-sys-surface);
+    border: 1px solid var(--tl-sys-border);
+    border-radius: var(--tl-sys-radius-md);
+    cursor: pointer;
+
+    &:hover {
+        border-color: var(--tl-sys-border-hover);
+    }
+
+    &.is-open {
+        border-color: var(--tl-sys-primary);
+        box-shadow: 0 0 0 2px var(--tl-sys-primary-light);
+
+        .tl-select-arrow {
+            transform: rotate(180deg);
+            /* Xoay mũi tên lên khi mở */
+        }
+    }
+}
+
+.tl-select-display-value {
+    font-size: $tl-font-size-sm;
+    color: var(--tl-sys-text-main);
+
+    &.placeholder {
+        color: var(--tl-sys-text-muted);
+    }
+}
+
+.tl-select-actions {
+    @include flex-y-center;
+    gap: 8px;
+}
+
+.tl-select-clear {
+    @include flex-center;
+    cursor: pointer;
+    color: var(--tl-sys-text-muted);
+    font-size: 14px;
+    transition: color 0.2s ease;
+
+    &:hover {
+        color: var(--tl-sys-error);
+    }
+
+    &.is-hidden {
+        display: none !important;
+    }
+}
+
+.tl-select-arrow {
+    @include flex-center;
+    font-size: 16px;
+    color: var(--tl-sys-text-muted);
+    transition: transform var(--tl-sys-motion-duration) var(--tl-sys-motion-ease);
+
+    &.is-open {
+        transform: rotate(180deg);
+    }
+}
+
+.tl-select-dropdown {
+    @include custom-scrollbar;
+    position: absolute;
+    /* Làm cho nó "bay" lên trên các thành phần khác */
+    top: calc(100% + 4px);
+    left: 0;
+    width: 100%;
+    max-height: 250px;
+    /* Giới hạn chiều cao nếu nhiều option */
+    overflow-y: auto;
+    /* Hiện thanh cuộn nếu quá dài */
+    background-color: var(--tl-sys-surface);
+    border: 1px solid var(--tl-sys-border);
+    border-radius: var(--tl-sys-radius-md);
+    box-shadow: var(--tl-sys-shadow-lg);
+    z-index: 1000;
+    /* Đảm bảo không bị các thẻ khác đè lên */
+    margin: 0;
+    padding: 4px 0;
+    list-style: none;
+}
+
+.tl-select-option {
+    @include flex-y-center;
+    @include sys-transition(background);
+    padding: 10px 12px;
+    font-size: $tl-font-size-sm;
+    color: var(--tl-sys-text-main);
+    display: flex;
+    justify-content: space-between;
+    cursor: pointer;
+
+    &:hover {
+        background-color: var(--tl-sys-surface-muted);
+    }
+
+    &.active {
+        color: var(--tl-sys-primary);
+        font-weight: $tl-font-weight-semibold;
+        background-color: var(--tl-sys-primary-light);
+    }
+
+    &.disabled {
+        @include disabled-state;
+        color: var(--tl-sys-text-disabled);
+        background-color: var(--tl-sys-surface);
+    }
+}
+
+.tl-select-check {
+    font-size: 12px;
+    color: var(--tl-sys-primary);
+}
+
+.tl-select-empty {
+    padding: 10px 12px;
+    font-size: $tl-font-size-sm;
+    color: var(--tl-sys-text-muted);
+    text-align: center;
+}

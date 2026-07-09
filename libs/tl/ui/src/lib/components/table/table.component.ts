@@ -21,9 +21,9 @@ import {
   TlColumnDefDirective,
   TlCellDefDirective,
   TlHeaderCellDefDirective,
-} from './table-directives';
+} from './table-directives.component';
 import { TlTruncateTooltipDirective } from './truncate-tooltip.directive';
-
+import { TlIconComponent } from '../../icons/icon.component';
 export type TlTableRow = Record<string, unknown>;
 export type TlSortOrder = 'asc' | 'desc' | '';
 
@@ -36,9 +36,10 @@ export type TlSortOrder = 'asc' | 'desc' | '';
     TlCellDefDirective,
     TlHeaderCellDefDirective,
     TlTruncateTooltipDirective,
+    TlIconComponent,
   ],
-  templateUrl: './table.html',
-  styleUrls: ['./table.scss'],
+  templateUrl: './table.component.html',
+  styleUrls: ['./table.component.scss'],
   encapsulation: ViewEncapsulation.Emulated,
 })
 export class TlTableComponent<T extends TlTableRow> implements OnChanges, OnInit {

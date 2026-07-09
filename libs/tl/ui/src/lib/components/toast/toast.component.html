@@ -1,0 +1,33 @@
+@if (toasts.length >= 3) {
+  <div class="tl-toast-clear-all-wrapper">
+    <button class="tl-toast-btn-clear-all" (click)="clearAll()">Remove all</button>
+  </div>
+}
+
+@for (toast of toasts; track toast.id) {
+  <div
+    class="tl-toast-item"
+    [ngClass]="[toast.type, toast.visible ? 'show' : 'hide']"
+    (mouseenter)="pauseToast(toast)"
+    (mouseleave)="resumeToast(toast)"
+  >
+    <span class="tl-toast-icon">
+      @if (toast.type === 'success') {
+        <tl-icon name="check"></tl-icon>
+      }
+      @if (toast.type === 'error') {
+        <tl-icon name="close"></tl-icon>
+      }
+      @if (toast.type === 'info') {
+        <tl-icon name="info"></tl-icon>
+      }
+      @if (toast.type === 'warning') {
+        <tl-icon name="alert"></tl-icon>
+      }
+    </span>
+
+    <span class="tl-toast-message">{{ toast.message }}</span>
+
+    <button class="tl-toast-close" (click)="closeManual(toast)">✕</button>
+  </div>
+}

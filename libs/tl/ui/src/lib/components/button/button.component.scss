@@ -1,0 +1,166 @@
+@import 'index';
+
+.tl-btn {
+    @include flex-y-center;
+    @include sys-transition(all);
+    justify-content: center;
+    position: relative;
+    box-sizing: border-box;
+    border: 1px solid transparent;
+    outline: none;
+    font-family: $tl-font-family;
+    font-weight: $tl-font-weight-medium;
+    cursor: pointer;
+    user-select: none;
+
+    // ==========================================================================
+    // BUTTON SIZES
+    // ==========================================================================
+    &.tl-btn-xs {
+        padding: 2px 8px;
+        font-size: $tl-font-size-xs;
+    }
+
+    &.tl-btn-sm {
+        padding: 4px 12px;
+        font-size: $tl-font-size-sm;
+    }
+
+    &.tl-btn-md {
+        padding: 8px 16px;
+        font-size: $tl-font-size-base;
+    }
+
+    &.tl-btn-lg {
+        padding: 10px 20px;
+        font-size: $tl-font-size-lg;
+    }
+
+    &.tl-btn-xl {
+        padding: 12px 24px;
+        font-size: $tl-font-size-xl;
+    }
+
+    // ==========================================================================
+    // BUTTON SHAPES (Độ bo góc tùy biến)
+    // ==========================================================================
+    &.tl-btn-square {
+        border-radius: 0;
+    }
+
+    &.tl-btn-rounded {
+
+        // Tự động map theo size để bo góc nhìn cân đối
+        &.tl-btn-xs,
+        &.tl-btn-sm {
+            border-radius: var(--tl-sys-radius-sm);
+        }
+
+        &.tl-btn-md,
+        &.tl-btn-lg {
+            border-radius: var(--tl-sys-radius-md);
+        }
+
+        &.tl-btn-xl {
+            border-radius: var(--tl-sys-radius-lg);
+        }
+    }
+
+    &.tl-btn-pill {
+        border-radius: var(--tl-sys-radius-full);
+    }
+
+    &.tl-btn-circle {
+        border-radius: var(--tl-sys-radius-full);
+        padding: 0 !important; // Ép thành hình tròn xoe (thường dùng chứa icon)
+
+        // Đảm bảo chiều rộng bằng chiều cao
+        &.tl-btn-xs {
+            width: 24px;
+            height: 24px;
+        }
+
+        &.tl-btn-sm {
+            width: 32px;
+            height: 32px;
+        }
+
+        &.tl-btn-md {
+            width: 40px;
+            height: 40px;
+        }
+
+        &.tl-btn-lg {
+            width: 48px;
+            height: 48px;
+        }
+
+        &.tl-btn-xl {
+            width: 56px;
+            height: 56px;
+        }
+    }
+
+    // ==========================================================================
+    // BUTTON VARIANTS
+    // ==========================================================================
+    &.tl-btn-primary {
+        background-color: var(--tl-sys-primary);
+        color: var(--tl-sys-surface);
+        box-shadow: var(--tl-sys-shadow-sm);
+
+        &:hover:not(:disabled) {
+            background-color: var(--tl-sys-primary-hover);
+        }
+
+        &:active:not(:disabled) {
+            background-color: var(--tl-sys-primary-active);
+        }
+    }
+
+    &.tl-btn-secondary {
+        background-color: var(--tl-sys-surface-muted);
+        color: var(--tl-sys-text-main);
+        border-color: var(--tl-sys-border);
+
+        &:hover:not(:disabled) {
+            background-color: var(--tl-sys-border);
+        }
+    }
+
+    &.tl-btn-outline {
+        background-color: transparent;
+        color: var(--tl-sys-primary);
+        border-color: var(--tl-sys-primary);
+
+        &:hover:not(:disabled) {
+            background-color: var(--tl-sys-primary-light);
+        }
+    }
+
+    &.tl-btn-text {
+        background-color: transparent;
+        color: var(--tl-sys-text-body);
+
+        &:hover:not(:disabled) {
+            background-color: var(--tl-sys-surface-muted);
+            color: var(--tl-sys-text-main);
+        }
+    }
+
+    // ==========================================================================
+    // GLOBAL STATES
+    // ==========================================================================
+    &:disabled {
+        @include disabled-state;
+        background-color: var(--tl-sys-surface-muted) !important;
+        color: var(--tl-sys-text-disabled) !important;
+        border-color: var(--tl-sys-border) !important;
+        box-shadow: none !important;
+    }
+
+    &.tl-btn-block {
+        display: flex;
+        width: 100%;
+    }
+}

@@ -1,0 +1,31 @@
+// ==========================================================================
+// 1. FONT FAMILY
+// ==========================================================================
+$tl-font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+
+// ==========================================================================
+// 2. FONT SIZES (Thang cỡ chữ chuẩn UI)
+// ==========================================================================
+$tl-font-size-xs: 0.75rem; // 12px  
+$tl-font-size-sm: 0.875rem; // 14px  
+$tl-font-size-base: 1rem; // 16px  
+$tl-font-size-lg: 1.125rem; // 18px  
+$tl-font-size-xl: 1.25rem; // 20px  
+$tl-font-size-2xl: 1.5rem; // 24px  
+
+// ==========================================================================
+// 3. FONT WEIGHTS (Độ dày chữ)
+// ==========================================================================
+$tl-font-weight-normal: 400;
+$tl-font-weight-medium: 500;
+$tl-font-weight-semibold: 600;
+$tl-font-weight-bold: 700;
+
+// ==========================================================================
+// 4. LINE HEIGHTS (Khoảng cách dòng giúp chữ dễ đọc)
+// ==========================================================================
+$tl-line-height-none: 1;
+$tl-line-height-tight: 1.25;
+$tl-line-height-snug: 1.375;
+$tl-line-height-normal: 1.5;
+$tl-line-height-relaxed: 1.625;

@@ -11,15 +11,15 @@ import {
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TlTabItemComponent } from './tab-item.component';
-import { TlTabLabelDirective } from './tab-label.directive';
-import { TlTabContentDirective } from './tab-content.directive';
+import { TlTabLabelDirective } from './tab-label.directive.component';
+import { TlTabContentDirective } from './tab-content.directive.component';
 export type TlTabsPosition = 'top' | 'bottom' | 'left' | 'right';
 @Component({
   selector: 'tl-tabs',
   standalone: true,
   imports: [CommonModule],
-  templateUrl: './tabs.html',
-  styleUrl: './tabs.scss',
+  templateUrl: './tabs.component.html',
+  styleUrl: './tabs.component.scss',
 })
 export class TlTabsComponent implements AfterContentInit, AfterViewInit {
   @ContentChildren(TlTabItemComponent) tabItems!: QueryList<TlTabItemComponent>;
@@ -68,7 +68,7 @@ export class TlTabsComponent implements AfterContentInit, AfterViewInit {
     } else {
       this.inkBarHeight = activeHeaderElem.offsetHeight;
       this.inkBarTop = activeHeaderElem.offsetTop;
-      this.inkBarWidth = 2; // Thanh gạch đứng dày 2px
+      this.inkBarWidth = 2;
       this.inkBarLeft = 0;
     }
 

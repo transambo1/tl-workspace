@@ -1,0 +1,63 @@
+<div class="tl-pagination-wrapper">
+  @if (showSizeChanger) {
+    <div class="tl-page-size-changer">
+      <span class="tl-size-changer-label">{{ 'Items per page:' }}</span>
+      <div class="tl-size-select-box">
+        <tl-select
+          [options]="selectSizeOptions"
+          [selectedValue]="pageSize"
+          (selectedValueChange)="onPageSizeSelect($event)"
+        ></tl-select>
+      </div>
+    </div>
+  }
+
+  <button
+    class="tl-page-btn arrow-btn"
+    [class]="variant"
+    [disabled]="currentPage === 1"
+    (click)="selectPage(currentPage - 1)"
+  >
+    <ng-content select="[prev]"></ng-content>
+
+    <span class="tl-pagination-fallback">
+      @if (prevLabel) {
+        <span class="tl-default-label">{{ prevLabel }}</span>
+      } @else {
+        <tl-icon name="chevronLeft"></tl-icon>
+      }
+    </span>
+  </button>
+
+  @for (page of pages; track $index) {
+    @if (page === '...') {
+      <span class="tl-pagination-ellipsis">...</span>
+    } @else {
+      <button
+        class="tl-page-btn"
+        [class]="variant"
+        [class.active]="page === currentPage"
+        (click)="selectPage(page)"
+      >
+        {{ page }}
+      </button>
+    }
+  }
+
+  <button
+    class="tl-page-btn arrow-btn"
+    [class]="variant"
+    [disabled]="currentPage === totalPages"
+    (click)="selectPage(currentPage + 1)"
+  >
+    <ng-content select="[next]"></ng-content>
+
+    <span class="tl-pagination-fallback">
+      @if (nextLabel) {
+        <span class="tl-default-label">{{ nextLabel }}</span>
+      } @else {
+        <tl-icon name="chevronRight"></tl-icon>
+      }
+    </span>
+  </button>
+</div>

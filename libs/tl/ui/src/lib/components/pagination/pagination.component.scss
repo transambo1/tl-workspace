@@ -1,0 +1,159 @@
+@use 'index' as *; // Sửa từ @import sang @use để sạch Warning chú nhé
+
+.tl-pagination-wrapper {
+    @include flex-y-center;
+    gap: 8px;
+    user-select: none;
+    font-family: $tl-font-family;
+
+    .tl-page-btn {
+        @include flex-center;
+        @include sys-transition(all);
+        min-width: 36px;
+        height: 36px;
+        padding: 0 6px;
+        border: 1px solid var(--tl-sys-border);
+        background-color: var(--tl-sys-surface);
+        cursor: pointer;
+        font-size: $tl-font-size-sm;
+        color: var(--tl-sys-text-body);
+        line-height: 1; // Khóa cứng dòng chữ, không cho chữ tự phình đẩy lệch nút
+        box-sizing: border-box; // Đảm bảo padding không làm phình kích thước 36px
+
+        &.square {
+            border-radius: var(--tl-sys-radius-md);
+        }
+
+        &.circle {
+            border-radius: var(--tl-sys-radius-full);
+            padding: 0; // Khóa chặt padding bằng 0 để tạo hình tròn hoàn hảo 36x36
+            width: 36px; // Ép cứng chiều rộng bằng chiều cao đối với nút tròn
+        }
+
+        &.square,
+        &.circle {
+            &:hover:not([disabled]) {
+                color: var(--tl-sys-primary);
+                border-color: var(--tl-sys-primary);
+            }
+
+            &.active {
+                color: var(--tl-sys-primary);
+                background-color: var(--tl-sys-primary-light);
+                border-color: var(--tl-sys-primary);
+                font-weight: $tl-font-weight-semibold;
+            }
+
+            &[disabled] {
+                @include disabled-state;
+                color: var(--tl-sys-text-disabled);
+                background-color: var(--tl-sys-surface-muted);
+                border-color: var(--tl-sys-border);
+                cursor: not-allowed;
+            }
+        }
+
+        &.text-only {
+            border-color: transparent;
+            background-color: transparent;
+            border-bottom: 2px solid transparent;
+
+            &:hover:not([disabled]) {
+                color: var(--tl-sys-primary);
+            }
+
+            &.active {
+                color: var(--tl-sys-text-main);
+                border-bottom-color: var(--tl-sys-text-main);
+                font-weight: $tl-font-weight-bold;
+                background-color: transparent;
+            }
+
+            &[disabled] {
+                @include disabled-state;
+                color: var(--tl-sys-text-disabled);
+                background-color: transparent;
+                border-color: transparent;
+            }
+        }
+
+        /* SỬA CHÍ CHÍNH CHO NÚT MŨI TÊN TRÁI / PHẢI */
+        &.arrow-btn {
+            gap: 0; // Đưa gap về 0 để tránh khoảng trống DOM ảo của ng-content làm lệch tâm
+
+            // Đảm bảo khối bọc fallback và tl-icon bên trong đồng tâm tuyệt đối
+            .tl-pagination-fallback {
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                width: 100%;
+                height: 100%;
+            }
+
+            tl-icon {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+
+            // Nếu người dùng có truyền custom content [prev] hoặc [next] vào ngoài App Demo
+            &:has(> [prev]),
+            &:has(> [next]) {
+                gap: 4px; // Lúc này mới bật lại gap nếu có nhiều hơn 1 phần tử thực tế
+
+                .tl-pagination-fallback {
+                    display: none !important;
+                }
+            }
+        }
+    }
+
+    .tl-page-size-changer {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-left: 16px;
+        height: 36px;
+
+        .tl-size-changer-label {
+            font-size: $tl-font-size-xs;
+            color: var(--tl-sys-text-muted);
+            white-space: nowrap;
+        }
+
+        .tl-size-select-box {
+            min-width: 100px;
+            height: 100%;
+
+            tl-select {
+                width: 100%;
+                height: 100%;
+
+                // Ép khối select-box đồng đều chiều cao 36px cân đối dòng
+                .tl-select-trigger,
+                .tl-select-input,
+                select {
+                    display: flex;
+                    align-items: center;
+                    height: 36px !important;
+                    line-height: 1 !important;
+                    padding: 0 8px !important;
+                    box-sizing: border-box !important;
+                }
+
+                .tl-select-display-value {
+                    font-variant-numeric: tabular-nums;
+                }
+            }
+        }
+    }
+
+    .tl-pagination-ellipsis {
+        display: inline-block;
+        padding: 0 8px;
+        color: var(--tl-sys-text-disabled);
+        font-size: $tl-font-size-sm;
+        line-height: 36px;
+        text-align: center;
+    }
+}

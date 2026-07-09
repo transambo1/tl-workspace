@@ -1,0 +1,143 @@
+@import 'index';
+
+:host {
+    display: block;
+    width: 100%;
+    font-family: $tl-font-family;
+
+    .tl-tabs-container {
+        display: flex;
+        width: 100%;
+
+        // Hướng 1: TOP (Mặc định - Menu trên, nội dung dưới)
+        &.top {
+            flex-direction: column;
+
+            .tl-tabs-nav-bar {
+                border-bottom: 2px solid var(--tl-sys-border);
+                flex-direction: row;
+            }
+
+            .tl-tabs-ink-bar {
+                bottom: -2px;
+                left: 0;
+            }
+        }
+
+        &.bottom {
+            flex-direction: column-reverse;
+
+            .tl-tabs-nav-bar {
+                border-top: 2px solid var(--tl-sys-border);
+                flex-direction: row;
+            }
+
+            .tl-tabs-ink-bar {
+                top: -2px;
+                left: 0;
+            }
+        }
+
+        &.left {
+            flex-direction: row;
+
+            .tl-tabs-nav-bar {
+                border-right: 2px solid var(--tl-sys-border);
+                flex-direction: column;
+                padding-right: 0;
+            }
+
+            .tl-tabs-ink-bar {
+                right: -2px;
+                top: 0;
+            }
+
+            .tl-tabs-content-viewport {
+                padding-left: 20px;
+                flex: 1;
+            }
+        }
+
+        &.right {
+            flex-direction: row-reverse;
+
+            .tl-tabs-nav-bar {
+                border-left: 2px solid var(--tl-sys-border);
+                flex-direction: column;
+                padding-left: 0;
+            }
+
+            .tl-tabs-ink-bar {
+                left: -2px;
+                top: 0;
+            }
+
+            .tl-tabs-content-viewport {
+                padding-right: 20px;
+                flex: 1;
+            }
+        }
+    }
+
+    .tl-tabs-nav-bar {
+        display: flex;
+        position: relative;
+    }
+
+    .tl-tabs-header-item {
+        @include sys-transition(color);
+        padding: 12px 24px;
+        font-size: $tl-font-size-sm;
+        font-weight: $tl-font-weight-medium;
+        color: var(--tl-sys-text-muted);
+        cursor: pointer;
+        user-select: none;
+        white-space: nowrap;
+        /* Chống vỡ chữ khi bóp dọc */
+
+        &:hover:not(.disabled) {
+            color: var(--tl-sys-text-main);
+        }
+
+        &.active {
+            color: var(--tl-sys-primary);
+            font-weight: $tl-font-weight-semibold;
+        }
+
+        &.disabled {
+            @include disabled-state;
+            color: var(--tl-sys-text-disabled);
+        }
+    }
+
+    .tl-tabs-ink-bar {
+        position: absolute;
+        background-color: var(--tl-sys-primary);
+        transition: transform var(--tl-sys-motion-duration) var(--tl-sys-motion-ease),
+            width var(--tl-sys-motion-duration) var(--tl-sys-motion-ease),
+            height var(--tl-sys-motion-duration) var(--tl-sys-motion-ease);
+        will-change: transform, width, height;
+    }
+
+    .tl-tabs-content-viewport {
+        width: 100%;
+    }
+
+    .tl-tabs-content-pane {
+        width: 100%;
+        animation: tabFadeIn var(--tl-sys-motion-duration) var(--tl-sys-motion-ease);
+        color: var(--tl-sys-text-body);
+    }
+}
+
+@keyframes tabFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(4px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}

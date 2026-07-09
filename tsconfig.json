@@ -4,7 +4,7 @@
   "compileOnSave": false,
   "compilerOptions": {
     "paths": {
-      "@tl/ui": ["./dist/tl/ui", "./dist/tl/ui/index.d.ts"]
+      "@tl/ui": ["./dist/tl/ui", "./dist/tl/ui/index.d.ts", "./libs/tl/ui/src/public-api.ts"]
     },
     "strict": true,
     "noImplicitOverride": true,

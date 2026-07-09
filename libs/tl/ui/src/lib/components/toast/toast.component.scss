@@ -1,0 +1,157 @@
+@import 'index';
+
+:host {
+    position: fixed;
+    z-index: 9999;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    max-width: 400px;
+    width: calc(100% - 40px);
+    pointer-events: none;
+
+    &.top-right {
+        top: 20px;
+        right: 20px;
+    }
+
+    &.top-left {
+        top: 20px;
+        left: 20px;
+    }
+
+    &.bottom-right {
+        bottom: 20px;
+        right: 20px;
+        flex-direction: column-reverse;
+    }
+
+    &.bottom-left {
+        bottom: 20px;
+        left: 20px;
+        flex-direction: column-reverse;
+    }
+
+    .tl-toast-item {
+        pointer-events: auto;
+        @include flex-y-center;
+        padding: 14px 16px;
+        border-radius: var(--tl-sys-radius-lg);
+        background-color: var(--tl-sys-surface);
+        color: var(--tl-sys-text-main);
+        box-shadow: var(--tl-sys-shadow-md);
+        font-family: $tl-font-family;
+        font-size: $tl-font-size-sm;
+        border: 1px solid var(--tl-sys-border); // Đắp thêm viền mảnh cho sang trọng
+        animation: toastSlideIn var(--tl-sys-motion-duration) cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
+
+        &.success {
+            border-left: 4px solid var(--tl-sys-success);
+
+            .tl-toast-icon {
+                color: var(--tl-sys-success);
+            }
+        }
+
+        &.error {
+            border-left: 4px solid var(--tl-sys-error);
+
+            .tl-toast-icon {
+                color: var(--tl-sys-error);
+            }
+        }
+
+        &.info {
+            border-left: 4px solid var(--tl-sys-primary);
+
+            .tl-toast-icon {
+                color: var(--tl-sys-primary);
+            }
+        }
+
+        &.warning {
+            border-left: 4px solid var(--tl-sys-warning);
+
+            .tl-toast-icon {
+                color: var(--tl-sys-warning);
+            }
+        }
+    }
+
+    .tl-toast-icon {
+        @include flex-center;
+        margin-right: 12px;
+        font-size: 18px; // Tăng size nhẹ để icon mảnh trông rõ nét hơn
+        width: 24px;
+        height: 24px;
+        flex-shrink: 0;
+    }
+
+    .tl-toast-message {
+        flex: 1;
+        line-height: $tl-line-height-tight;
+        padding-right: 10px;
+        color: var(--tl-sys-text-body);
+    }
+
+    .tl-toast-close {
+        @include flex-center;
+        @include sys-transition(color);
+        border: none;
+        background: transparent;
+        color: var(--tl-sys-text-disabled);
+        cursor: pointer;
+        font-size: 16px;
+        padding: 4px;
+        flex-shrink: 0;
+
+        &:hover {
+            color: var(--tl-sys-text-main);
+        }
+    }
+}
+
+.tl-toast-clear-all-wrapper {
+    display: flex;
+    justify-content: flex-end;
+    width: 100%;
+    margin-bottom: 4px;
+    animation: toastSlideIn var(--tl-sys-motion-duration) var(--tl-sys-motion-ease);
+    pointer-events: auto;
+
+    .tl-toast-btn-clear-all {
+        @include sys-transition(all);
+        background: var(--tl-sys-surface);
+        border: 1px solid var(--tl-sys-border);
+        padding: 6px 14px;
+        border-radius: var(--tl-sys-radius-full);
+        font-size: $tl-font-size-xs;
+        font-weight: $tl-font-weight-semibold;
+        color: var(--tl-sys-text-muted);
+        cursor: pointer;
+        box-shadow: var(--tl-sys-shadow-sm);
+
+        &:hover {
+            color: var(--tl-sys-error);
+            border-color: var(--tl-sys-error);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(244, 63, 94, 0.1);
+        }
+
+        &:active {
+            transform: translateY(0);
+        }
+    }
+}
+
+@keyframes toastSlideIn {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}

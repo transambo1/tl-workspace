@@ -3,39 +3,28 @@
  */
 
 // Button
-export * from './lib/components/button/button.types';
-export * from './lib/components/button/button';
+export * from './lib/components/button';
 
 // Input
-export * from './lib/components/input/input.types';
-export * from './lib/components/input/input';
+export * from './lib/components/input';
 
 // Select
-export * from './lib/components/select/select.types';
-export * from './lib/components/select/select';
+export * from './lib/components/select';
 
 // Modal
-export * from './lib/components/modal/modal';
+export * from './lib/components/modal';
 
 // Pagination
-export * from './lib/components/pagination/pagination';
+export * from './lib/components/pagination';
 
 // Tabs
-export * from './lib/components/tabs/tabs.component';
-export * from './lib/components/tabs/tab-item.component';
-export * from './lib/components/tabs/tab-label.directive';
-export * from './lib/components/tabs/tab-content.directive';
+export * from './lib/components/tabs';
 
 // Card
-export * from './lib/components/card/card.component';
-export * from './lib/components/card/card-header.component';
-export * from './lib/components/card/card-content.component';
-export * from './lib/components/card/card-footer.component';
+export * from './lib/components/card';
 
 // Table
-export * from './lib/components/table/table.component';
-export * from './lib/components/table/table-directives';
+export * from './lib/components/table';
 
 //Toast
-export * from './lib/components/toast/toast.type';
-export * from './lib/components/toast/toast.service';
+export * from './lib/components/toast';

@@ -1,0 +1,51 @@
+@import 'variables';
+
+@mixin flex-center {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+@mixin flex-y-center {
+    display: flex;
+    align-items: center;
+}
+
+@mixin text-ellipsis {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+@mixin sys-transition($properties: all) {
+    transition-property: $properties;
+    transition-duration: var(--tl-sys-motion-duration);
+    transition-timing-function: var(--tl-sys-motion-ease);
+}
+
+@mixin disabled-state {
+    cursor: not-allowed;
+    opacity: 0.6;
+    pointer-events: none;
+    user-select: none;
+}
+
+@mixin custom-scrollbar {
+    &::-webkit-scrollbar {
+        width: 6px;
+        height: 6px;
+    }
+
+    &::-webkit-scrollbar-track {
+        background: transparent;
+    }
+
+    &::-webkit-scrollbar-thumb {
+        background: var(--tl-sys-border);
+        border-radius: var(--tl-sys-radius-full);
+
+        &:hover {
+            background: var(--tl-sys-border-hover);
+        }
+    }
+}

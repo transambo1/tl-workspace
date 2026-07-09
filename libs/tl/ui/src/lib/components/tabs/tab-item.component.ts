@@ -4,11 +4,11 @@ import {
   ContentChild,
   TemplateRef,
   ViewChild,
-  ContentChildren, // 🌟 Thêm đầy đủ core decorators
+  ContentChildren,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { TlTabLabelDirective } from './tab-label.directive';
-import { TlTabContentDirective } from './tab-content.directive';
+import { TlTabLabelDirective } from './tab-label.directive.component';
+import { TlTabContentDirective } from './tab-content.directive.component';
 
 @Component({
   selector: 'tl-tab-item',
