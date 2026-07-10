@@ -2,6 +2,7 @@ import { Component, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TlToast, ToastType } from './toast.component.type';
 import { TlIconComponent } from '../../icons/icon.component';
+import { generateUniqueId } from '../../utils';
 @Component({
   selector: 'tl-toast-container',
   standalone: true,
@@ -23,8 +24,8 @@ export class ToastComponent {
     this.cdr.detectChanges();
   }
 
-  add(type: ToastType, message: string, duration: number = 3000): number {
-    const id = Date.now() + Math.random();
+  add(type: ToastType, message: string, duration: number = 3000): string {
+    const id = generateUniqueId('tl-toast');
     const newToast: TlToast = {
       id,
       type,
@@ -55,7 +56,7 @@ export class ToastComponent {
   }
 
   pauseToast(toast: TlToast) {
-    if (!toast.visible) return; // Đang chạy animation tắt thì bỏ qua
+    if (!toast.visible) return;
     toast.isHovered = true;
     if (toast.timeoutId) {
       clearTimeout(toast.timeoutId);

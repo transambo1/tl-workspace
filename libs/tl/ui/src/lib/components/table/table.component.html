@@ -108,18 +108,23 @@
               [style.width]="col.width"
               [style.min-width]="col.width"
               [style.text-align]="col.align"
-              [class.tl-cell-truncate]="col.truncate && !col.cell"
-              [tlTruncateTooltip]="col.truncate && !col.cell"
-              [tooltipText]="$any(row[col.name]) || ''"
             >
-              @if (col.cell) {
-                <ng-container
-                  [ngTemplateOutlet]="col.cell.templateRef"
-                  [ngTemplateOutletContext]="{ $implicit: row }"
-                ></ng-container>
-              } @else {
-                <span class="tl-cell-default-text">{{ row[col.name] }}</span>
-              }
+              <div
+                [class.tl-cell-truncate]="col.truncate && !col.cell"
+                [tlTruncateTooltip]="col.truncate && !col.cell"
+                [tooltipText]="$any(row[col.name]) || ''"
+                [style.text-align]="col.align"
+                style="width: 100%; display: block"
+              >
+                @if (col.cell) {
+                  <ng-container
+                    [ngTemplateOutlet]="col.cell.templateRef"
+                    [ngTemplateOutletContext]="{ $implicit: row }"
+                  ></ng-container>
+                } @else {
+                  <span class="tl-cell-default-text">{{ row[col.name] }}</span>
+                }
+              </div>
             </td>
           }
         </tr>
@@ -163,13 +168,13 @@
         <span class="tl-page-info">
           {{ (currentPage - 1) * pageSize + 1 }} –
           {{
-            currentPage * pageSize > (serverSide ? totalRecords : dataSource.length)
+            currentPage * pageSize > (serverSide ? totalRecords : processedData.length)
               ? serverSide
                 ? totalRecords
-                : dataSource.length
+                : processedData.length
               : currentPage * pageSize
           }}
-          of {{ serverSide ? totalRecords : dataSource.length }}
+          of {{ serverSide ? totalRecords : processedData.length }}
         </span>
 
         <div class="tl-page-buttons-group" role="group" aria-label="Các nút chuyển trang">
@@ -210,7 +215,7 @@
             (click)="goToPage(totalPages)"
             aria-label="Đến trang cuối cùng"
           >
-            <tl-icon name="close"></tl-icon>
+            <tl-icon name="chevronsRight"></tl-icon>
           </button>
         </div>
       </div>

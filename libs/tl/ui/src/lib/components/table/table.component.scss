@@ -19,8 +19,6 @@
     border-spacing: 0;
     font-size: $tl-font-size-sm;
     font-family: $tl-font-family;
-
-    // 🔥 KHÓA CỨNG FIXED: Bắt buộc trình duyệt tính toán theo width của Directive để kích hoạt truncate dấu ba chấm
     table-layout: fixed;
 
     thead {
@@ -49,7 +47,6 @@
                 @include flex-y-center;
                 gap: 6px;
                 width: 100%;
-                // Để trống justify-content để nó tự động ăn theo text-align của thẻ cha th
             }
         }
     }
@@ -73,34 +70,30 @@
             vertical-align: middle;
             box-sizing: border-box;
             border-bottom: 1px solid var(--tl-sys-border);
-
-            // 🔥 VÁ LỖI DẠT TRÁI: Ép ô dữ liệu td bên dưới phải tuân thủ hướng căn lề thừa kế từ Directive truyền xuống HTML
             text-align: inherit;
+            word-break: break-word;
+            overflow-wrap: break-word;
         }
     }
 }
 
-/* ==========================================================================
-   TRANG THAI 1 & 2: RE-CLEAN CHẠY CẮT CHỮ TRUNCATE CHUẨN ĐÉT
-   ========================================================================== */
 .tl-cell-truncate {
-    max-width: 0;
+    display: block !important;
+    width: 100%;
+    max-width: 100%;
     white-space: nowrap !important;
     overflow: hidden !important;
     text-overflow: ellipsis !important;
 
-    // Ép các text lồng từ ngoài app truyền vào qua ng-template cũng phải tuân thủ cắt chữ inline
-    * {
-        display: inline !important;
+    span,
+    class,
+    div,
+    .tl-cell-default-text {
+        display: inline-block;
+        max-width: 100%;
         white-space: nowrap !important;
         overflow: hidden !important;
         text-overflow: ellipsis !important;
-    }
-
-    .tl-cell-default-text {
-        display: block;
-        width: 100%;
-        @include text-ellipsis;
     }
 }
 
@@ -118,9 +111,7 @@
     font-size: $tl-font-size-sm;
 }
 
-/* ==========================================================================
-   GIAO DIEN PAGINATION BAR INTERNALLY
-   ========================================================================== */
+/* GIAO DIEN PAGINATION BAR GỐC CHUẨN ĐÉT CỦA THÀNH */
 .tl-table-pagination-bar {
     @include flex-y-center;
     justify-content: flex-end;
@@ -192,12 +183,6 @@
     &:disabled {
         @include disabled-state;
         color: var(--tl-sys-text-disabled);
-    }
-
-    .tl-mat-icon {
-        font-size: 14px;
-        font-weight: $tl-font-weight-bold;
-        line-height: 1;
     }
 }
 

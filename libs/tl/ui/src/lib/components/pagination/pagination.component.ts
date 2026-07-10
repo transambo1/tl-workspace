@@ -9,13 +9,17 @@ import {
   ElementRef,
   AfterContentInit,
 } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { SelectComponent } from '../select/select.component';
 import { TlIconComponent } from '../../icons/icon.component';
+import { generatePageRange } from '../../utils';
+
 export type PaginationType = 'circle' | 'square' | 'text-only';
+
 @Component({
   selector: 'tl-pagination',
   standalone: true,
-  imports: [SelectComponent, TlIconComponent],
+  imports: [CommonModule, SelectComponent, TlIconComponent],
   templateUrl: './pagination.component.html',
   styleUrl: './pagination.component.scss',
 })
@@ -57,48 +61,28 @@ export class PaginationComponent implements OnChanges, AfterContentInit {
     if (changes['totalItems'] || changes['pageSize'] || changes['currentPage']) {
       this.calculatePages();
     }
+
+    // Chỉ cập nhật tùy chọn select-box khi mảng cấu hình cấu tùy chọn thay đổi, TRÁNH gán đè cứng reset pageSize
     if (changes['pageSizeOptions'] || !this.selectSizeOptions.length) {
       this.updateSelectOptions();
       if (this.pageSizeOptions && this.pageSizeOptions.length > 0) {
-        this.pageSize = this.pageSizeOptions[0];
-        this.calculatePages();
+        if (!changes['pageSize'] && this.pageSizeOptions && this.pageSizeOptions.length > 0) {
+          this.pageSize = this.pageSizeOptions[0];
+          this.calculatePages();
+        }
       }
     }
   }
 
+  // Logic tính Pagination
   calculatePages() {
     const total = Number(this.totalItems) || 0;
     const size = Number(this.pageSize) || 10;
     this.totalPages = Math.ceil(total / size) || 1;
-
-    const current = this.currentPage;
-    const totalPages = this.totalPages;
-
-    let pagesArray: (number | string)[] = [];
-
-    if (totalPages <= 7) {
-      for (let i = 1; i <= totalPages; i++) pagesArray.push(i);
-    } else {
-      if (current <= 4) {
-        pagesArray = [1, 2, 3, 4, 5, '...', totalPages];
-      } else if (current >= totalPages - 3) {
-        pagesArray = [
-          1,
-          '...',
-          totalPages - 4,
-          totalPages - 3,
-          totalPages - 2,
-          totalPages - 1,
-          totalPages,
-        ];
-      } else {
-        pagesArray = [1, '...', current - 1, current, current + 1, '...', totalPages];
-      }
-    }
-
-    this.pages = pagesArray;
+    this.pages = generatePageRange(this.currentPage, this.totalPages);
   }
-  // --- Quản lí thay đổi page) ---
+
+  // --- Quản lí thay đổi page ---
   selectPage(page: number | string) {
     if (typeof page === 'string') return;
     if (page < 1 || page > this.totalPages || page === this.currentPage) {
@@ -107,22 +91,27 @@ export class PaginationComponent implements OnChanges, AfterContentInit {
     this.currentPage = page;
     this.pageChange.emit(this.currentPage);
     this.currentPageChange.emit(this.currentPage);
+    this.calculatePages();
   }
 
-  // --- Dùng để thay đổi page/total ---
+  // --- Thay đổi kích thước trang hiển thị (Dùng cho size changer) ---
   onPageSizeSelect(newSize: string | number | null) {
     if (!newSize) return;
     this.pageSize = Number(newSize);
     this.pageSizeChange.emit(this.pageSize);
 
+    // Khi đổi số dòng hiển thị, lập tức đá người dùng quay về trang 1 để tránh lỗi crash out-of-bound dữ liệu
     this.currentPage = 1;
     this.currentPageChange.emit(this.currentPage);
     this.calculatePages();
   }
+
   // --- Định dạng dữ liệu truyền cho tl-select ---
   updateSelectOptions() {
+    if (!this.pageSizeOptions || this.pageSizeOptions.length === 0) return;
+
     this.selectSizeOptions = this.pageSizeOptions.map((size) => ({
-      label: `${size} / ${this.totalItems}`,
+      label: `${size} / page`,
       value: size,
     }));
   }

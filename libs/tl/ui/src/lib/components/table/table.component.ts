@@ -24,6 +24,8 @@ import {
 } from './table-directives.component';
 import { TlTruncateTooltipDirective } from './truncate-tooltip.directive';
 import { TlIconComponent } from '../../icons/icon.component';
+import { deepClone } from '../../utils';
+
 export type TlTableRow = Record<string, unknown>;
 export type TlSortOrder = 'asc' | 'desc' | '';
 
@@ -43,7 +45,6 @@ export type TlSortOrder = 'asc' | 'desc' | '';
   encapsulation: ViewEncapsulation.Emulated,
 })
 export class TlTableComponent<T extends TlTableRow> implements OnChanges, OnInit {
-  // Inject DestroyRef dùng cho ma thuật tự động hủy lắng nghe bộ nhớ (Angular 16+)
   private destroyRef = inject(DestroyRef);
 
   private filterSubject = new Subject<string>();
@@ -118,6 +119,9 @@ export class TlTableComponent<T extends TlTableRow> implements OnChanges, OnInit
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['dataSource'] || changes['filterValue']) {
+      if (changes['dataSource']) {
+        this.currentPage = 1;
+      }
       this.applyFilterAndSort();
     }
   }
@@ -182,7 +186,8 @@ export class TlTableComponent<T extends TlTableRow> implements OnChanges, OnInit
       return;
     }
 
-    let result = [...this.dataSource];
+    // ✨ HOÀN HẢO: Gọi deepClone bảo hiểm ô nhớ cho dataSource trước khi xử lý lọc/sắp xếp
+    let result = deepClone(this.dataSource);
     result = this.applyFilter(result);
     result = this.applySort(result);
     this.processedData = result;
@@ -211,10 +216,7 @@ export class TlTableComponent<T extends TlTableRow> implements OnChanges, OnInit
     return data.filter((row) =>
       Object.values(row).some((value) => {
         if (value == null) return false;
-
-        // Bỏ qua object phức tạp hoặc mảng, chỉ so khớp dữ liệu nguyên thủy để tối ưu tốc độ CPU
         if (typeof value === 'object') return false;
-
         return String(value).toLowerCase().includes(this.currentFilterNormalized);
       }),
     );

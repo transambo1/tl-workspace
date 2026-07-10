@@ -28,3 +28,6 @@ export * from './lib/components/table';
 
 //Toast
 export * from './lib/components/toast';
+
+//Util
+export * from './lib/utils';
