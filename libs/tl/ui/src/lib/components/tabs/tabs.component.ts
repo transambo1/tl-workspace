@@ -11,9 +11,10 @@ import {
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TlTabItemComponent } from './tab-item.component';
-import { TlTabLabelDirective } from './tab-label.directive.component';
-import { TlTabContentDirective } from './tab-content.directive.component';
+import { generateUniqueId } from '../../utils';
+
 export type TlTabsPosition = 'top' | 'bottom' | 'left' | 'right';
+
 @Component({
   selector: 'tl-tabs',
   standalone: true,
@@ -32,12 +33,17 @@ export class TlTabsComponent implements AfterContentInit, AfterViewInit {
   inkBarLeft = 0;
   inkBarTop = 0;
 
+  tabIds: { buttonId: string; panelId: string }[] = [];
+
   constructor(private cdr: ChangeDetectorRef) {}
+
   ngAfterContentInit(): void {
     if (this.tabItems.length > 0) {
       this.activeTabIndex = 0;
     }
+    this.generateTabAccessibilityIds();
   }
+
   ngAfterViewInit(): void {
     setTimeout(() => {
       this.updateInkBarPosition();
@@ -52,6 +58,13 @@ export class TlTabsComponent implements AfterContentInit, AfterViewInit {
     setTimeout(() => {
       this.cdr.detectChanges();
     }, 0);
+  }
+
+  private generateTabAccessibilityIds(): void {
+    this.tabIds = this.tabItems.toArray().map((_, idx) => ({
+      buttonId: generateUniqueId(`tl-tab-btn-${idx}`),
+      panelId: generateUniqueId(`tl-tab-panel-${idx}`),
+    }));
   }
 
   private updateInkBarPosition(): void {
@@ -71,7 +84,6 @@ export class TlTabsComponent implements AfterContentInit, AfterViewInit {
       this.inkBarWidth = 2;
       this.inkBarLeft = 0;
     }
-
     this.cdr.detectChanges();
   }
 }

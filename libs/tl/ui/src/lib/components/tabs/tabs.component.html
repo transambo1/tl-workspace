@@ -1,19 +1,33 @@
 <div class="tl-tabs-container" [ngClass]="position">
-  <div class="tl-tabs-nav-bar">
+  <div
+    class="tl-tabs-nav-bar"
+    role="tablist"
+    [attr.aria-orientation]="
+      position === 'left' || position === 'right' ? 'vertical' : 'horizontal'
+    "
+  >
     @for (tab of tabItems; track $index) {
-      <div
+      <button
         #tabHeader
+        type="button"
+        role="tab"
+        [attr.id]="tabIds[$index]?.buttonId"
+        [attr.aria-controls]="tabIds[$index]?.panelId"
+        [attr.aria-selected]="activeTabIndex === $index"
+        [attr.tabindex]="activeTabIndex === $index ? 0 : -1"
         class="tl-tabs-header-item"
         [class.active]="activeTabIndex === $index"
         [class.disabled]="tab.disabled"
+        [disabled]="tab.disabled"
         (click)="selectTab($index, tab.disabled)"
+        (keydown.space)="$event.preventDefault(); selectTab($index, tab.disabled)"
       >
         @if (tab.customLabel) {
           <ng-container [ngTemplateOutlet]="tab.customLabel.templateRef"></ng-container>
         } @else {
-          {{ tab.label }}
+          <span class="tl-tab-label-text">{{ tab.label }}</span>
         }
-      </div>
+      </button>
     }
 
     <div
@@ -31,7 +45,12 @@
   <div class="tl-tabs-content-viewport">
     @for (tab of tabItems; track $index) {
       @if (activeTabIndex === $index) {
-        <div class="tl-tabs-content-pane">
+        <div
+          class="tl-tabs-content-pane"
+          role="tabpanel"
+          [attr.id]="tabIds[$index]?.panelId"
+          [attr.aria-labelledby]="tabIds[$index]?.buttonId"
+        >
           @if (tab.lazyContent) {
             <ng-container [ngTemplateOutlet]="tab.lazyContent.templateRef"></ng-container>
           } @else {

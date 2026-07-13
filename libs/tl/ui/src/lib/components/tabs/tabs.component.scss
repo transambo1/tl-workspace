@@ -9,7 +9,6 @@
         display: flex;
         width: 100%;
 
-        // Hướng 1: TOP (Mặc định - Menu trên, nội dung dưới)
         &.top {
             flex-direction: column;
 
@@ -85,6 +84,19 @@
     }
 
     .tl-tabs-header-item {
+
+        background: transparent;
+        border: none;
+        outline: none;
+        margin: 0;
+        text-align: center;
+        font-family: inherit;
+        -webkit-appearance: none;
+        appearance: none;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+
         @include sys-transition(color);
         padding: 12px 24px;
         font-size: $tl-font-size-sm;
@@ -93,7 +105,6 @@
         cursor: pointer;
         user-select: none;
         white-space: nowrap;
-        /* Chống vỡ chữ khi bóp dọc */
 
         &:hover:not(.disabled) {
             color: var(--tl-sys-text-main);
@@ -107,6 +118,12 @@
         &.disabled {
             @include disabled-state;
             color: var(--tl-sys-text-disabled);
+            cursor: not-allowed;
+        }
+
+        &:focus-visible {
+            outline: 2px solid var(--tl-sys-primary);
+            outline-offset: -2px;
         }
     }
 
