@@ -1,163 +1,77 @@
 import {
   Component,
   Input,
-  ViewEncapsulation,
-  forwardRef,
-  ElementRef,
-  Renderer2,
   OnInit,
-  AfterViewInit, // ✨ Thay đổi: Sử dụng AfterViewInit thay cho OnInit
-  HostListener,
-  ViewContainerRef,
-  ComponentRef,
-  ViewChild,
+  OnChanges,
+  Optional,
+  Self,
+  ChangeDetectorRef,
+  HostBinding,
+  SimpleChanges,
 } from '@angular/core';
+import { ControlValueAccessor, NgControl } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
-import { TLInputType } from './input.component.types';
 import { TlIconComponent } from '../../icons/icon.component';
+import { generateUniqueId } from '../../utils/string.util';
+import { getValidatorMessage } from '../../utils/form-error.util';
+import { TLInputType } from './input.component.types';
 
 @Component({
-  selector: 'input[tl-input]',
+  selector: 'tl-input',
   standalone: true,
   imports: [CommonModule, TlIconComponent],
-  templateUrl: './input.component.html', // Neo vào file HTML giữ chỗ
+  templateUrl: './input.component.html',
   styleUrl: './input.component.scss',
-  encapsulation: ViewEncapsulation.None,
-  providers: [
-    {
-      provide: NG_VALUE_ACCESSOR,
-      useExisting: forwardRef(() => InputComponent),
-      multi: true,
-    },
-  ],
 })
-export class InputComponent implements ControlValueAccessor, OnInit, AfterViewInit {
-  private _value: string = '';
-
-  @Input() label: string = '';
-  @Input() hint: string = '';
+export class TlInputComponent implements OnInit, OnChanges, ControlValueAccessor {
+  // --- Các Inputs cấu hình API cực mạnh ---
+  @Input() label = '';
+  @Input() hint = '';
+  @Input() placeholder = '';
   @Input() type: TLInputType = 'text';
+  @Input() required = false;
+  @Input() disabled = false;
+  @Input() id = generateUniqueId('tl-input');
 
-  // 🎯 Lấy reference để tránh Tree-shaking của compiler
-  @ViewChild('iconContainer', { read: ViewContainerRef, static: false })
-  iconContainerRef!: ViewContainerRef;
+  @HostBinding('class.tl-input-disabled') get hostDisabled() {
+    return this.disabled;
+  }
+  @HostBinding('attr.aria-disabled') get hostAriaDisabled() {
+    return this.disabled ? 'true' : null;
+  }
 
-  private wrapperEl!: HTMLElement;
-  private passwordBtn!: HTMLElement;
-  private showPassword = false;
-  private iconComponentRef!: ComponentRef<TlIconComponent>;
+  showPassword = false;
+  nativeType: TLInputType = 'text';
+
+  // --- Giá trị và hàm Callback của ControlValueAccessor ---
+  value: any = '';
+  onChange: (value: any) => void = () => {};
+  onTouched: () => void = () => {};
 
   constructor(
-    private el: ElementRef,
-    private renderer: Renderer2,
-  ) {}
+    @Optional() @Self() public ngControl: NgControl,
+    private cdr: ChangeDetectorRef,
+  ) {
+    if (this.ngControl) {
+      // Gán accessor trực tiếp để Angular Forms nhận dạng cây cầu kết nối dữ liệu
+      this.ngControl.valueAccessor = this;
+    }
+  }
 
   ngOnInit(): void {
-    this.updateNativeType();
+    this.nativeType = this.type;
   }
 
-  // 🔥 CHÌA KHÓA HIỂN THỊ UI: Chờ giao diện HTML dựng xong mới bắt đầu nhét Layout động và Icon vào!
-  ngAfterViewInit(): void {
-    // Dùng setTimeout bọc nhẹ để tránh lỗi "ExpressionChangedAfterItHasBeenCheckedError" của Angular
-    setTimeout(() => {
-      this.buildDynamicLayout();
-    });
-  }
-
-  private updateNativeType(): void {
-    const inputType = this.showPassword ? 'text' : this.type;
-    this.renderer.setProperty(this.el.nativeElement, 'type', inputType);
-  }
-
-  private buildDynamicLayout(): void {
-    const nativeInput = this.el.nativeElement;
-    const parent = nativeInput.parentNode;
-
-    if (!parent || (!this.label && !this.hint && this.type !== 'password')) {
-      return;
-    }
-
-    // 1. Tạo wrapper bọc ngoài cùng
-    this.wrapperEl = this.renderer.createElement('div');
-    this.renderer.addClass(this.wrapperEl, 'tl-input-wrapper');
-    this.renderer.insertBefore(parent, this.wrapperEl, nativeInput);
-
-    // 2. Tạo Label
-    if (this.label) {
-      const labelEl = this.renderer.createElement('label');
-      this.renderer.addClass(labelEl, 'tl-input-label');
-      const labelText = this.renderer.createText(this.label);
-      this.renderer.appendChild(labelEl, labelText);
-      this.renderer.appendChild(this.wrapperEl, labelEl);
-    }
-
-    // 3. Tạo Container chứa input gốc
-    const containerEl = this.renderer.createElement('div');
-    this.renderer.addClass(containerEl, 'tl-input-field-container');
-    this.renderer.appendChild(this.wrapperEl, containerEl);
-    this.renderer.appendChild(containerEl, nativeInput);
-    this.renderer.addClass(nativeInput, 'tl-input-native');
-
-    // 4. Nếu là password -> Tạo nút bấm và gọi Icon của dự án
-    if (this.type === 'password') {
-      this.passwordBtn = this.renderer.createElement('button');
-      this.renderer.setAttribute(this.passwordBtn, 'type', 'button');
-      this.renderer.addClass(this.passwordBtn, 'tl-input-toggle-password');
-
-      // Nhét Icon động từ ViewContainerRef đã sẵn sàng ở HTML
-      if (this.iconContainerRef) {
-        this.iconComponentRef = this.iconContainerRef.createComponent(TlIconComponent);
-        this.iconComponentRef.instance.name = 'eyeOff'; // Ban đầu hiện mắt đóng
-        this.iconComponentRef.changeDetectorRef.detectChanges();
-
-        // Bốc cái xác DOM của Icon nhét vào lòng nút bấm
-        this.renderer.appendChild(this.passwordBtn, this.iconComponentRef.location.nativeElement);
-      }
-
-      this.renderer.listen(this.passwordBtn, 'click', () => this.togglePassword());
-      this.renderer.appendChild(containerEl, this.passwordBtn);
-    }
-
-    // 5. Tạo Hint
-    if (this.hint) {
-      const hintEl = this.renderer.createElement('span');
-      this.renderer.addClass(hintEl, 'tl-input-hint');
-      const hintText = this.renderer.createText(this.hint);
-      this.renderer.appendChild(hintEl, hintText);
-      this.renderer.appendChild(this.wrapperEl, hintEl);
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['type']) {
+      this.nativeType = this.type;
     }
   }
 
-  togglePassword(): void {
-    this.showPassword = !this.showPassword;
-    this.updateNativeType();
-
-    // Đổi @Input() name mượt mà và thông báo Angular vẽ lại
-    if (this.iconComponentRef) {
-      this.iconComponentRef.instance.name = this.showPassword ? 'eye' : 'eyeOff';
-      this.iconComponentRef.changeDetectorRef.detectChanges();
-    }
-  }
-
-  onChange: any = () => {};
-  onTouched: any = () => {};
-
-  @HostListener('input', ['$event'])
-  onInput(event: Event) {
-    const target = event.target as HTMLInputElement;
-    this._value = target.value;
-    this.onChange(this._value);
-  }
-
-  @HostListener('blur')
-  onBlur() {
-    this.onTouched();
-  }
-
+  // --- ControlValueAccessor Implementation ---
   writeValue(value: any): void {
-    this._value = value || '';
-    this.renderer.setProperty(this.el.nativeElement, 'value', this._value);
+    this.value = value === null || value === undefined ? '' : value;
+    this.cdr.markForCheck();
   }
 
   registerOnChange(fn: any): void {
@@ -168,7 +82,43 @@ export class InputComponent implements ControlValueAccessor, OnInit, AfterViewIn
     this.onTouched = fn;
   }
 
-  setDisabledState?(isDisabled: boolean): void {
-    this.renderer.setProperty(this.el.nativeElement, 'disabled', isDisabled);
+  setDisabledState(isDisabled: boolean): void {
+    this.disabled = isDisabled;
+    this.cdr.markForCheck();
+  }
+
+  // --- Xử lý sự kiện tương tác người dùng ---
+  onInputChange(event: Event): void {
+    const target = event.target as HTMLInputElement;
+    this.value = target.value;
+    this.onChange(this.value);
+  }
+
+  onInputBlur(): void {
+    this.onTouched();
+  }
+
+  // --- Cơ chế ẩn/hiện password mượt mà ---
+  togglePassword(): void {
+    this.showPassword = !this.showPassword;
+    this.nativeType = this.showPassword ? 'text' : 'password';
+  }
+
+  // --- Lấy thông điệp lỗi tự động từ Form Control ---
+  get errorMessage(): string | null {
+    if (this.ngControl && this.ngControl.errors && this.ngControl.touched) {
+      const errorKeys = Object.keys(this.ngControl.errors);
+      if (errorKeys.length > 0) {
+        const firstErrorKey = errorKeys[0];
+        const errorValue = this.ngControl.errors[firstErrorKey];
+        return getValidatorMessage(firstErrorKey, errorValue);
+      }
+    }
+    return null;
+  }
+
+  // --- Computed States để gán class CSS tương ứng ---
+  get isError(): boolean {
+    return !!this.errorMessage;
   }
 }

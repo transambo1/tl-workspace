@@ -1,1 +1,53 @@
-<ng-container #iconContainer></ng-container>
+<div
+  class="tl-input-wrapper"
+  [class.tl-input-disabled]="disabled"
+  [class.tl-input-invalid]="isError"
+>
+  @if (label) {
+    <label [attr.for]="id" class="tl-input-label">
+      {{ label }}
+      @if (required) {
+        <span class="tl-input-required-star" aria-hidden="true">*</span>
+      }
+    </label>
+  }
+
+  <div class="tl-input-field-container">
+    <input
+      [id]="id"
+      [type]="nativeType"
+      [placeholder]="placeholder"
+      [disabled]="disabled"
+      [required]="required"
+      [value]="value"
+      (input)="onInputChange($event)"
+      (blur)="onInputBlur()"
+      class="tl-input-native"
+      [attr.aria-invalid]="isError"
+      [attr.aria-describedby]="isError ? id + '-error' : hint ? id + '-hint' : null"
+    />
+
+    @if (type === 'password' && !disabled) {
+      <button
+        type="button"
+        class="tl-input-toggle-password"
+        (click)="togglePassword()"
+        [attr.aria-label]="showPassword ? 'Ẩn mật khẩu' : 'Hiển thị mật khẩu'"
+      >
+        <tl-icon [name]="showPassword ? 'eyeOff' : 'eye'"></tl-icon>
+      </button>
+    }
+  </div>
+
+  <div class="tl-input-info-area">
+    @if (isError) {
+      <span [id]="id + '-error'" class="tl-input-error" role="alert">
+        {{ errorMessage }}
+      </span>
+    } @else if (hint) {
+      <span [id]="id + '-hint'" class="tl-input-hint">
+        {{ hint }}
+      </span>
+    }
+  </div>
+</div>
