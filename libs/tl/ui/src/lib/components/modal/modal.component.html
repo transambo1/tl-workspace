@@ -1,25 +1,24 @@
 @if (isOpen) {
-  <div class="tl-modal-backdrop" (click)="onBackdropClick($event)" role="presentation">
+  <div class="tl-modal-backdrop" (mousedown)="onBackdropClick($event)" role="presentation">
     <div
+      #modalContainer
       class="tl-modal-container"
       [class]="'tl-modal-' + size"
       role="dialog"
       aria-modal="true"
-      [attr.aria-labelledby]="modalTitleId"
-      [attr.aria-describedby]="modalBodyId"
+      [attr.aria-labelledby]="title ? modalId + '-title' : null"
+      tabindex="-1"
     >
       <div class="tl-modal-header">
-        <h2 [attr.id]="modalTitleId" class="tl-modal-title">
-          <ng-content select="[tl-modal-header]">
-            {{ title }}
-          </ng-content>
-        </h2>
-        <button class="tl-modal-close-btn" (click)="closeModal()" aria-label="Đóng hộp thoại">
+        @if (title) {
+          <h2 [id]="modalId + '-title'" class="tl-modal-title">{{ title }}</h2>
+        }
+        <button type="button" class="tl-modal-close-btn" (click)="close()" aria-label="Close modal">
           <tl-icon name="close"></tl-icon>
         </button>
       </div>
 
-      <div [attr.id]="modalBodyId" class="tl-modal-body">
+      <div class="tl-modal-body">
         <ng-content select="[tl-modal-body]"></ng-content>
       </div>
 

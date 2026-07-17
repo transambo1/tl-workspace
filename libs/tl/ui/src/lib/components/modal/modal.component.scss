@@ -1,29 +1,41 @@
-@import 'index';
+@import 'index'; // Giữ lại kết nối với Design System gốc của chú
 
+:host {
+    display: block;
+}
+
+// Lớp phủ nền mờ
 .tl-modal-backdrop {
     position: fixed;
-    inset: 0;
-    background-color: rgba(0, 0, 0, 0.5);
+    inset: 0; // Thay thế top/left/width/height bằng inset: 0 cho gọn và hiện đại
+    background-color: rgba(0, 0, 0, 0.5); // Nền mờ tiêu chuẩn
     display: flex;
     align-items: center;
     justify-content: center;
     z-index: var(--tl-sys-z-index-modal, 1000);
     padding: 24px;
-    animation: tl-fade-in 0.2s ease-out;
+
+    // Animation Fade In cho nền
+    animation: tl-fade-in 0.2s cubic-bezier(0.4, 0, 0.2, 1) both;
 }
 
+// Khung chứa Modal chính
 .tl-modal-container {
-    background: var(--tl-sys-surface);
-    border-radius: var(--tl-sys-radius-xl);
-    box-shadow: var(--tl-sys-shadow-xl);
+    background: var(--tl-sys-surface); // Sử dụng màu nền từ hệ thống
+    border-radius: var(--tl-sys-radius-xl); // Bo góc đồng bộ thư viện
+    box-shadow: var(--tl-sys-shadow-xl); // Bóng đổ đồng bộ thư viện
     display: flex;
     flex-direction: column;
+    box-sizing: border-box;
     max-height: calc(100vh - 48px);
-    width: 100%;
-    animation: tl-slide-up 0.25s cubic-bezier(0, 0, 0.2, 1);
+    width: min(100%, 100%);
+    max-width: 100%;
+    outline: none;
     overflow: hidden;
 
-    // Cấu hình các kích cỡ kích thước Modal Design System
+    animation: tl-scale-up 0.25s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+
+
     &.tl-modal-sm {
         max-width: 400px;
     }
@@ -37,64 +49,78 @@
     }
 }
 
+// Header
 .tl-modal-header {
-    @include flex-y-center;
+    @include flex-y-center; // Dùng mixin căn giữa dọc của chú
     justify-content: space-between;
     padding: 16px 24px;
     border-bottom: 1px solid var(--tl-sys-border);
+}
 
-    .tl-modal-title {
-        font-size: $tl-font-size-base;
-        font-weight: $tl-font-weight-semibold;
-        color: var(--tl-sys-text-main);
-        margin: 0;
+.tl-modal-title {
+    font-size: $tl-font-size-lg;
+    font-weight: $tl-font-weight-semibold;
+    color: var(--tl-sys-text-main);
+    margin: 0;
+}
+
+
+.tl-modal-close-btn {
+    @include flex-center;
+    @include sys-transition(all);
+    background: transparent;
+    border: none;
+    color: var(--tl-sys-text-muted);
+    width: 28px;
+    height: 28px;
+    border-radius: var(--tl-sys-radius-full);
+    cursor: pointer;
+
+    &:hover {
+        color: var(--tl-sys-error);
     }
 
-    .tl-modal-close-btn {
-        @include flex-center;
-        @include sys-transition(all);
-        background: transparent;
-        border: none;
-        color: var(--tl-sys-text-muted);
-        width: 28px;
-        height: 28px;
-        border-radius: var(--tl-sys-radius-full);
-        cursor: pointer;
-
-        &:hover {
-            background-color: var(--tl-sys-surface-muted);
-            color: var(--tl-sys-text-main);
-        }
-
-        &:focus-visible {
-            outline: 2px solid var(--tl-sys-primary);
-        }
+    &:focus-visible {
+        outline: 2px solid var(--tl-sys-primary);
     }
 }
 
+// Body
 .tl-modal-body {
     padding: 24px;
     overflow-y: auto;
     font-size: $tl-font-size-sm;
     color: var(--tl-sys-text-body);
-    @include custom-scrollbar;
+    @include custom-scrollbar; // Cuộn thanh mượt tự chế của chú
 }
 
+// Footer
 .tl-modal-footer {
-    @include flex-y-center;
+    display: flex;
     justify-content: flex-end;
-    gap: 12px;
+    align-items: center;
     padding: 16px 24px;
     border-top: 1px solid var(--tl-sys-border);
     background-color: var(--tl-sys-surface-muted);
 
-    // Mẹo tự dọn dẹp: Nếu ngoài app trống trơn không ném thẻ footer nào vào, vùng footer tự biến mất để tránh phí không gian trống
-    &:empty {
-        display: none;
+    ::ng-deep>* {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: flex-end;
+        gap: 12px;
+        width: 100%;
+        background: transparent;
     }
 }
 
-// Hệ thống animation mượt mà chuẩn Material
+// --- KHÓA CUỘN NỀN TRÊN THẺ BODY ---
+// Chữ :global giúp class này thoát khỏi đóng gói (Encapsulation) để tác động trực tiếp lên <body> ngoài trang chủ
+:global(body.tl-modal-open) {
+    overflow: hidden !important;
+}
+
+// --- HỆ ANIMATION SIÊU MƯỢT ---
 @keyframes tl-fade-in {
     from {
         opacity: 0;
@@ -105,14 +131,14 @@
     }
 }
 
-@keyframes tl-slide-up {
+@keyframes tl-scale-up {
     from {
-        transform: translateY(20px);
         opacity: 0;
+        transform: scale(0.95);
     }
 
     to {
-        transform: translateY(0);
         opacity: 1;
+        transform: scale(1);
     }
 }

@@ -4,74 +4,185 @@ import {
   Output,
   EventEmitter,
   ElementRef,
+  ViewChild,
   HostListener,
-  OnChanges,
-  SimpleChanges,
-  ViewEncapsulation,
+  AfterViewInit,
+  OnDestroy,
+  Inject,
+  Renderer2,
 } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule, DOCUMENT } from '@angular/common';
+import { generateUniqueId } from '../../utils/string.util';
 import { TlIconComponent } from '../../icons/icon.component';
-import { generateUniqueId } from '../../utils'; // ✨ Lôi vũ khí định danh duy nhất vào trận!
-
 @Component({
   selector: 'tl-modal',
   standalone: true,
   imports: [CommonModule, TlIconComponent],
   templateUrl: './modal.component.html',
   styleUrl: './modal.component.scss',
-  encapsulation: ViewEncapsulation.Emulated,
 })
-export class ModalComponent implements OnChanges {
-  @Input() isOpen: boolean = false;
-  @Input() title = 'Modal Title';
-  @Input() size: 'sm' | 'md' | 'lg' = 'md';
+export class TlModalComponent implements AfterViewInit, OnDestroy {
+  @Input() isOpen = false;
+  @Input() title = '';
+  @Input() size: 'sm' | 'md' | 'lg' | 'xl' = 'md';
   @Input() closeOnBackdrop = true;
-  @Output() close = new EventEmitter<void>();
 
-  modalTitleId = generateUniqueId('tl-modal-title');
-  modalBodyId = generateUniqueId('tl-modal-body');
+  @Output() isOpenChange = new EventEmitter<boolean>();
+  @Output() Close = new EventEmitter<void>();
 
-  constructor(private el: ElementRef) {}
+  @ViewChild('modalContainer') modalContainer!: ElementRef<HTMLDivElement>;
 
-  ngOnChanges(changes: SimpleChanges): void {
+  // Tạo ID duy nhất cho Modal bằng hàm của chú
+  modalId = generateUniqueId('tl-modal');
+
+  private previouslyFocusedElement: HTMLElement | null = null;
+
+  constructor(
+    private el: ElementRef,
+    private renderer: Renderer2,
+    @Inject(DOCUMENT) private document: Document,
+  ) {}
+
+  ngAfterViewInit(): void {
+    if (this.isOpen) {
+      this.handleModalOpen();
+    }
+  }
+
+  // Lắng nghe thay đổi của thuộc tính isOpen để xử lý side-effects
+  ngOnChanges(changes: any): void {
     if (changes['isOpen']) {
       if (this.isOpen) {
-        this.lockBodyScroll();
+        this.handleModalOpen();
       } else {
-        this.unlockBodyScroll();
+        this.handleModalClose();
       }
     }
   }
 
-  closeModal() {
-    this.close.emit();
+  ngOnDestroy(): void {
+    // Đảm bảo dọn dẹp scrollbar của body nếu component bị hủy đột ngột
+    this.renderer.removeClass(this.document.body, 'tl-modal-open');
   }
 
-  @HostListener('document:keydown.escape', ['$event'])
-  onEscapeKey(event: any) {
-    if (this.isOpen) {
-      this.closeModal();
+  close(): void {
+    if (!this.isOpen) {
+      return;
+    }
+
+    this.isOpen = false;
+    this.isOpenChange.emit(false);
+    this.Close.emit();
+    this.handleModalClose();
+  }
+
+  onBackdropClick(event: MouseEvent): void {
+    if (this.closeOnBackdrop && event.target === event.currentTarget) {
+      this.close();
     }
   }
 
-  onBackdropClick(event: MouseEvent) {
-    if (!this.closeOnBackdrop) return;
-    if (event.target === event.currentTarget) {
-      this.closeModal();
+  private handleModalOpen(): void {
+    // 1. Lưu lại element hiện tại đang active để khôi phục sau này
+    if (this.document.activeElement instanceof HTMLElement) {
+      this.previouslyFocusedElement = this.document.activeElement;
+    }
+
+    // 2. Khóa cuộn trang nền phía sau (Lock Scroll)
+    this.renderer.addClass(this.document.body, 'tl-modal-open');
+
+    // 3. Đưa tiêu điểm focus vào bên trong container của Modal
+    setTimeout(() => {
+      this.focusFirstTabbableElement();
+    }, 50); // Delay nhẹ để đợi animation hoàn thành
+  }
+
+  private handleModalClose(): void {
+    // 1. Mở khóa cuộn trang nền
+    this.renderer.removeClass(this.document.body, 'tl-modal-open');
+
+    // 2. Khôi phục lại focus cho trigger element ban đầu
+    const previousElement = this.previouslyFocusedElement;
+    this.previouslyFocusedElement = null;
+
+    if (previousElement?.isConnected) {
+      previousElement.focus();
     }
   }
 
-  // --- Thuật toán đo và khóa cứng scrollbar của trình duyệt ---
-  private lockBodyScroll() {
-    const scrollbarWidth = window.innerWidth - document.documentElement.clientWidth;
-    document.body.style.overflow = 'hidden';
-    if (scrollbarWidth > 0) {
-      document.body.style.paddingRight = `${scrollbarWidth}px`;
+  // --- HỖ TRỢ PHÍM BẤM & FOCUS TRAP ---
+  @HostListener('document:keydown', ['$event'])
+  handleKeyDown(event: KeyboardEvent): void {
+    if (!this.isOpen) return;
+
+    if (event.key === 'Escape') {
+      event.preventDefault();
+      this.close();
+    }
+
+    if (event.key === 'Tab') {
+      this.handleFocusTrap(event);
     }
   }
 
-  private unlockBodyScroll() {
-    document.body.style.overflow = '';
-    document.body.style.paddingRight = '';
+  private handleFocusTrap(event: KeyboardEvent): void {
+    const focusableElements = this.getFocusableElements();
+    if (focusableElements.length === 0) return;
+
+    const firstElement = focusableElements[0];
+    const lastElement = focusableElements[focusableElements.length - 1];
+
+    if (event.shiftKey) {
+      // Nhấn Shift + Tab: Nếu đang ở phần tử đầu tiên, vòng lặp đưa tiêu điểm về phần tử cuối cùng
+      if (this.document.activeElement === firstElement) {
+        lastElement.focus();
+        event.preventDefault();
+      }
+    } else {
+      // Nhấn Tab: Nếu đang ở phần tử cuối cùng, vòng lặp đưa tiêu điểm về phần tử đầu tiên
+      if (this.document.activeElement === lastElement) {
+        firstElement.focus();
+        event.preventDefault();
+      }
+    }
+  }
+
+  private focusFirstTabbableElement(): void {
+    const focusableElements = this.getFocusableElements();
+    if (focusableElements.length > 0) {
+      focusableElements[0].focus();
+    } else if (this.modalContainer) {
+      // Fallback: Focus vào chính container của Modal nếu không tìm thấy nút hay ô input nào
+      this.modalContainer.nativeElement.focus();
+    }
+  }
+
+  private getFocusableElements(): HTMLElement[] {
+    if (!this.modalContainer) return [];
+
+    // Tìm tất cả các phần tử có khả năng nhận tương tác focus
+    const selector = [
+      'a[href]',
+      'area[href]',
+      'input:not([disabled])',
+      'select:not([disabled])',
+      'textarea:not([disabled])',
+      'button:not([disabled])',
+      'iframe',
+      'object',
+      'embed',
+      '[tabindex]:not([tabindex="-1"])',
+      '[contenteditable]',
+    ].join(',');
+
+    const elements = Array.from(
+      this.modalContainer.nativeElement.querySelectorAll(selector),
+    ) as HTMLElement[];
+
+    // Loại bỏ các element đang bị ẩn (display: none hoặc visibility: hidden)
+    return elements.filter((el) => {
+      const style = window.getComputedStyle(el);
+      return style.display !== 'none' && style.visibility !== 'hidden';
+    });
   }
 }

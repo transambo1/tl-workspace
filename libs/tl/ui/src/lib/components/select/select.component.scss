@@ -1,4 +1,9 @@
-@import 'index';
+@use 'index' as *;
+
+:host {
+    display: block;
+    width: 100%;
+}
 
 .tl-select-wrapper {
     position: relative;
@@ -8,40 +13,57 @@
 
 .tl-select-label {
     display: block;
-    margin-bottom: 6px;
-    font-size: $tl-font-size-sm;
-    font-weight: $tl-font-weight-medium;
+    margin-bottom: 0.375rem; // 6px
+    font-size: 0.875rem; // 14px
+    font-weight: 500;
     color: var(--tl-sys-text-body);
+    @include sys-transition(color);
 }
 
 .tl-select-trigger {
     @include flex-y-center;
     @include sys-transition(all);
     justify-content: space-between;
-    padding: 10px 12px;
+    width: 100%;
+    height: 2.5rem; // 40px
+    padding: 0.5rem 0.75rem; // 8px x 12px
     background-color: var(--tl-sys-surface);
     border: 1px solid var(--tl-sys-border);
-    border-radius: var(--tl-sys-radius-md);
+    border-radius: 0.375rem; // 6px
+    color: var(--tl-sys-text-main);
     cursor: pointer;
+    outline: none;
+    box-sizing: border-box;
 
-    &:hover {
+    &:hover:not(:disabled) {
         border-color: var(--tl-sys-border-hover);
+    }
+
+    &:focus,
+    &.is-focused {
+        border-color: var(--tl-sys-primary);
+        box-shadow: 0 0 0 3px var(--tl-sys-primary-light);
     }
 
     &.is-open {
         border-color: var(--tl-sys-primary);
-        box-shadow: 0 0 0 2px var(--tl-sys-primary-light);
+    }
 
-        .tl-select-arrow {
-            transform: rotate(180deg);
-            /* Xoay mũi tên lên khi mở */
-        }
+    &:disabled {
+        background-color: var(--tl-sys-surface-muted);
+        color: var(--tl-sys-text-disabled);
+        border-color: var(--tl-sys-border);
+        opacity: 0.7;
+        cursor: not-allowed;
     }
 }
 
 .tl-select-display-value {
-    font-size: $tl-font-size-sm;
+    font-size: 0.875rem;
     color: var(--tl-sys-text-main);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 
     &.placeholder {
         color: var(--tl-sys-text-muted);
@@ -50,93 +72,133 @@
 
 .tl-select-actions {
     @include flex-y-center;
-    gap: 8px;
+    gap: 0.5rem;
+    flex-shrink: 0;
 }
 
 .tl-select-clear {
     @include flex-center;
     cursor: pointer;
     color: var(--tl-sys-text-muted);
-    font-size: 14px;
-    transition: color 0.2s ease;
+    font-size: 0.875rem;
+    @include sys-transition(color);
 
     &:hover {
         color: var(--tl-sys-error);
-    }
-
-    &.is-hidden {
-        display: none !important;
     }
 }
 
 .tl-select-arrow {
     @include flex-center;
-    font-size: 16px;
+    font-size: 1rem;
     color: var(--tl-sys-text-muted);
-    transition: transform var(--tl-sys-motion-duration) var(--tl-sys-motion-ease);
+    @include sys-transition(transform);
 
     &.is-open {
         transform: rotate(180deg);
     }
 }
 
+/* --- Container Dropdown --- */
 .tl-select-dropdown {
-    @include custom-scrollbar;
     position: absolute;
-    /* Làm cho nó "bay" lên trên các thành phần khác */
     top: calc(100% + 4px);
     left: 0;
     width: 100%;
-    max-height: 250px;
-    /* Giới hạn chiều cao nếu nhiều option */
-    overflow-y: auto;
-    /* Hiện thanh cuộn nếu quá dài */
     background-color: var(--tl-sys-surface);
     border: 1px solid var(--tl-sys-border);
-    border-radius: var(--tl-sys-radius-md);
-    box-shadow: var(--tl-sys-shadow-lg);
+    border-radius: 0.375rem;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
     z-index: 1000;
-    /* Đảm bảo không bị các thẻ khác đè lên */
+    box-sizing: border-box;
+}
+
+/* --- Danh sách Options --- */
+.tl-select-options {
+    @include custom-scrollbar;
+    max-height: 15rem; // 240px
+    overflow-y: auto;
     margin: 0;
-    padding: 4px 0;
+    padding: 0.25rem 0;
     list-style: none;
 }
 
+/* --- Từng dòng Option --- */
 .tl-select-option {
     @include flex-y-center;
     @include sys-transition(background);
-    padding: 10px 12px;
-    font-size: $tl-font-size-sm;
+    padding: 0.5rem 0.75rem;
+    font-size: 0.875rem;
     color: var(--tl-sys-text-main);
     display: flex;
     justify-content: space-between;
     cursor: pointer;
 
-    &:hover {
+    &:hover:not(.disabled),
+    &.is-focused:not(.disabled) {
         background-color: var(--tl-sys-surface-muted);
     }
 
-    &.active {
+    &.is-selected {
         color: var(--tl-sys-primary);
-        font-weight: $tl-font-weight-semibold;
+        font-weight: 500;
         background-color: var(--tl-sys-primary-light);
     }
 
     &.disabled {
         @include disabled-state;
         color: var(--tl-sys-text-disabled);
-        background-color: var(--tl-sys-surface);
+        background-color: transparent;
+        cursor: not-allowed;
+        opacity: 0.5;
     }
 }
 
 .tl-select-check {
-    font-size: 12px;
+    font-size: 0.75rem;
     color: var(--tl-sys-primary);
+    display: inline-flex;
+    align-items: center;
 }
 
-.tl-select-empty {
-    padding: 10px 12px;
-    font-size: $tl-font-size-sm;
+.tl-select-option-empty {
+    padding: 0.5rem 0.75rem;
+    font-size: 0.875rem;
     color: var(--tl-sys-text-muted);
     text-align: center;
+}
+
+
+.tl-select-info-area {
+    display: block;
+    margin-top: 4px;
+    font-size: 12px;
+    line-height: 1.25;
+}
+
+.tl-select-hint {
+    font-size: 0.75rem; // 12px
+    color: var(--tl-sys-text-muted);
+}
+
+.tl-select-error {
+    font-size: 0.75rem; // 12px
+    color: var(--tl-sys-error);
+    font-weight: 500;
+}
+
+/* --- TRẠNG THÁI INVALID (BÁO LỖI ĐỎ ĐỒNG BỘ) --- */
+.tl-select-wrapper.tl-select-invalid {
+    .tl-select-label {
+        color: var(--tl-sys-error);
+    }
+
+    .tl-select-trigger {
+        border-color: var(--tl-sys-error);
+
+        &:focus,
+        &.is-focused {
+            box-shadow: 0 0 0 3px var(--tl-sys-error-light);
+        }
+    }
 }

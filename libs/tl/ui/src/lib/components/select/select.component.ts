@@ -4,14 +4,21 @@ import {
   Output,
   forwardRef,
   ViewEncapsulation,
-  HostListener,
   ElementRef,
   EventEmitter,
+  ChangeDetectorRef,
+  Optional,
+  HostListener,
+  Self,
 } from '@angular/core';
-import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
+import { ControlValueAccessor, NgControl } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { TlSelectionOption } from './select.component.types';
 import { TlIconComponent } from '../../icons/icon.component';
+import { getValidatorMessage } from '../../utils/form-error.util';
+
+let nextId = 0;
+
 @Component({
   selector: 'tl-select',
   standalone: true,
@@ -19,23 +26,27 @@ import { TlIconComponent } from '../../icons/icon.component';
   templateUrl: './select.component.html',
   styleUrl: './select.component.scss',
   encapsulation: ViewEncapsulation.None,
-  providers: [
-    { provide: NG_VALUE_ACCESSOR, useExisting: forwardRef(() => SelectComponent), multi: true },
-  ],
+  host: {
+    '[class.tl-select-disabled]': 'disabled',
+    '[class.tl-select-invalid]': 'isError',
+  },
 })
 export class SelectComponent implements ControlValueAccessor {
-  constructor(private el: ElementRef) {}
-
   @Input() options: TlSelectionOption[] = [];
-  @Input() placeholder: string = 'Select an option';
-  @Input() label: string = '';
-  @Input() clearable: boolean = false;
+  @Input() placeholder = 'Select an option';
+  @Input() label = '';
+  @Input() hint = '';
+  @Input() clearable = false;
 
-  //--- Cach dung binh thuong khong qua form ---//
   @Input() selectedValue: any = null;
   @Output() selectedValueChange = new EventEmitter<any>();
 
-  // Dùng duy nhất thuộc tính này để quản lý trạng thái khóa cho cả Form và HTML thuần
+  isOpen = false;
+  focusedIndex = -1;
+  isFocused = false;
+
+  selectId = `tl-select-${nextId++}`;
+
   private _disabled = false;
 
   @Input()
@@ -48,27 +59,59 @@ export class SelectComponent implements ControlValueAccessor {
       this.isOpen = false;
     }
   }
-  //---------------------------------//
-
-  isOpen = false;
 
   onChange: any = () => {};
   onTouched: any = () => {};
 
-  toggleDropdown() {
-    if (this.disabled) return;
-
-    this.isOpen = !this.isOpen;
-    this.onTouched();
+  constructor(
+    private el: ElementRef,
+    private cdr: ChangeDetectorRef,
+    @Optional() @Self() public ngControl: NgControl,
+  ) {
+    if (this.ngControl) {
+      this.ngControl.valueAccessor = this;
+    }
   }
 
-  selectOption(option: TlSelectionOption) {
+  // --- GETTER PHÁT HIỆN VALIDATION LỖI (Đồng bộ giống Input Component) ---
+  get isError(): boolean {
+    if (!this.ngControl) return false;
+    const { dirty, touched, invalid } = this.ngControl;
+    return !!(invalid && (dirty || touched));
+  }
+
+  get errorMessage(): string | null {
+    if (!this.isError || !this.ngControl || !this.ngControl.errors) return null;
+    const errorKeys = Object.keys(this.ngControl.errors);
+    if (errorKeys.length > 0) {
+      const firstErrorKey = errorKeys[0];
+      const errorValue = this.ngControl.errors[firstErrorKey];
+      return getValidatorMessage(firstErrorKey, errorValue);
+    }
+    return null;
+  }
+
+  toggleDropdown(): void {
+    if (this.disabled) return;
+    this.isOpen = !this.isOpen;
+    if (this.isOpen) {
+      this.focusedIndex = this.options.findIndex((opt) => opt.value === this.selectedValue);
+      if (this.focusedIndex === -1) {
+        this.focusedIndex = 0;
+      }
+    } else {
+      this.onTouched();
+    }
+  }
+
+  selectOption(option: TlSelectionOption, index: number): void {
     if (option.disabled || this.disabled) return;
     this.selectedValue = option.value;
-    // Thong thuong
+    this.focusedIndex = index;
     this.selectedValueChange.emit(option.value);
     this.onChange(option.value);
     this.isOpen = false;
+    this.onTouched();
   }
 
   get selectedLabel(): string {
@@ -76,31 +119,133 @@ export class SelectComponent implements ControlValueAccessor {
     return selected ? selected.label : this.placeholder;
   }
 
-  @HostListener('document:click', ['$event'])
-  onClickOutside(event: Event) {
+  // Click ra ngoài thì đóng an toàn, bảo vệ scrollbar click
+  @HostListener('document:mousedown', ['$event'])
+  onClickOutside(event: Event): void {
     if (!this.el.nativeElement.contains(event.target)) {
-      this.isOpen = false;
+      if (this.isOpen) {
+        this.isOpen = false;
+        this.onTouched();
+        this.cdr.markForCheck();
+      }
+      this.isFocused = false;
     }
   }
 
-  clearSelection(event: MouseEvent) {
+  clearSelection(event: MouseEvent): void {
     event.stopPropagation();
     if (this.disabled) return;
-
     this.selectedValue = null;
     this.selectedValueChange.emit(null);
     this.onChange(null);
     this.onTouched();
   }
 
-  // --- CONTROL VALUE ACCESSOR INTERFACE ---
+  onFocus(): void {
+    if (this.disabled) return;
+    this.isFocused = true;
+  }
 
+  onBlur(): void {
+    this.onTouched();
+  }
+
+  // --- HỖ TRỢ ĐIỀU HƯỚNG BÀN PHÍM ---
+  handleKeyDown(event: KeyboardEvent): void {
+    if (this.disabled) return;
+
+    switch (event.key) {
+      case 'Enter':
+      case ' ':
+        event.preventDefault();
+        if (!this.isOpen) {
+          this.toggleDropdown();
+        } else if (this.focusedIndex >= 0 && this.focusedIndex < this.options.length) {
+          const option = this.options[this.focusedIndex];
+          if (!option.disabled) {
+            this.selectOption(option, this.focusedIndex);
+          }
+        }
+        break;
+
+      case 'ArrowDown':
+        event.preventDefault();
+        if (!this.isOpen) {
+          this.toggleDropdown();
+        } else {
+          this.moveFocus(1);
+        }
+        break;
+
+      case 'ArrowUp':
+        event.preventDefault();
+        if (!this.isOpen) {
+          this.toggleDropdown();
+        } else {
+          this.moveFocus(-1);
+        }
+        break;
+
+      case 'Escape':
+        event.preventDefault();
+        if (this.isOpen) {
+          this.isOpen = false;
+          this.onTouched();
+        }
+        break;
+
+      case 'Tab':
+        if (this.isOpen) {
+          this.isOpen = false;
+          this.onTouched();
+        }
+        break;
+    }
+  }
+
+  private moveFocus(direction: number): void {
+    const len = this.options.length;
+    if (len === 0) return;
+
+    let nextIndex = this.focusedIndex;
+    do {
+      nextIndex = (nextIndex + direction + len) % len;
+    } while (this.options[nextIndex]?.disabled && nextIndex !== this.focusedIndex);
+
+    if (!this.options[nextIndex]?.disabled) {
+      this.focusedIndex = nextIndex;
+      this.scrollOptionIntoView(nextIndex);
+    }
+  }
+
+  private scrollOptionIntoView(index: number): void {
+    setTimeout(() => {
+      const dropdownEl = this.el.nativeElement.querySelector('.tl-select-options');
+      const optionEl = this.el.nativeElement.querySelector(
+        `.tl-select-option:nth-child(${index + 1})`,
+      );
+      if (dropdownEl && optionEl) {
+        const dropdownRect = dropdownEl.getBoundingClientRect();
+        const optionRect = optionEl.getBoundingClientRect();
+
+        if (optionRect.bottom > dropdownRect.bottom) {
+          dropdownEl.scrollTop += optionRect.bottom - dropdownRect.bottom;
+        } else if (optionRect.top < dropdownRect.top) {
+          dropdownEl.scrollTop -= dropdownRect.top - optionRect.top;
+        }
+      }
+    });
+  }
+
+  // --- ControlValueAccessor ---
   setDisabledState?(isDisabled: boolean): void {
     this.disabled = isDisabled;
+    this.cdr.markForCheck();
   }
 
   writeValue(value: any): void {
     this.selectedValue = value;
+    this.cdr.markForCheck();
   }
 
   registerOnChange(fn: any): void {

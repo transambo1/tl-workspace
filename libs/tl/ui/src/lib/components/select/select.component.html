@@ -1,50 +1,100 @@
-<div class="tl-select-wrapper">
+<div
+  class="tl-select-wrapper"
+  [class.tl-select-disabled]="disabled"
+  [class.tl-select-invalid]="isError"
+>
   @if (label) {
-    <label class="tl-select-label">{{ label }}</label>
+    <label [id]="selectId + '-label'" class="tl-select-label">{{ label }}</label>
   }
 
-  <div
+  <button
+    [id]="selectId + '-trigger'"
+    type="button"
     class="tl-select-trigger"
     [class.is-open]="isOpen"
-    [class.is-disabled]="disabled"
+    [class.is-focused]="isFocused"
+    [disabled]="disabled"
+    [attr.tabindex]="disabled ? '-1' : '0'"
     (click)="toggleDropdown()"
+    (focus)="onFocus()"
+    (blur)="onBlur()"
+    (keydown)="handleKeyDown($event)"
+    role="combobox"
+    [attr.aria-controls]="selectId + '-dropdown'"
+    [attr.aria-expanded]="isOpen"
+    [attr.aria-haspopup]="'listbox'"
+    [attr.aria-labelledby]="label ? selectId + '-label' : null"
+    [attr.aria-describedby]="isError ? selectId + '-error' : hint ? selectId + '-hint' : null"
   >
     <span class="tl-select-display-value" [class.placeholder]="!selectedValue">
       {{ selectedLabel }}
     </span>
-    <div class="tl-select-actions">
-      <span
-        class="tl-select-clear"
-        [class.is-hidden]="!clearable || selectedValue === null"
-        (click)="clearSelection($event)"
-      >
-        <tl-icon name="close"></tl-icon>
-      </span>
 
-      <span class="tl-select-arrow" [class.is-open]="isOpen">
+    <div class="tl-select-actions">
+      @if (clearable && selectedValue !== null && !disabled) {
+        <span
+          class="tl-select-clear"
+          (click)="clearSelection($event)"
+          role="button"
+          tabindex="-1"
+          aria-label="Clear selection"
+        >
+          <tl-icon name="close"></tl-icon>
+        </span>
+      }
+
+      <span class="tl-select-arrow" [class.is-open]="isOpen" aria-hidden="true">
         <tl-icon name="chevronDown"></tl-icon>
       </span>
     </div>
-  </div>
+  </button>
 
   @if (isOpen) {
-    <ul class="tl-select-dropdown">
-      @for (option of options; track option.value) {
-        <li
-          class="tl-select-option"
-          [class.active]="option.value === selectedValue"
-          [class.disabled]="option.disabled"
-          (click)="$event.stopPropagation(); selectOption(option)"
-        >
-          {{ option.label }}
+    <div [id]="selectId + '-dropdown'" class="tl-select-dropdown">
+      <ul
+        class="tl-select-options"
+        role="listbox"
+        [attr.aria-labelledby]="label ? selectId + '-label' : null"
+        [attr.aria-activedescendant]="focusedIndex >= 0 ? selectId + '-opt-' + focusedIndex : null"
+      >
+        @for (option of options; track option.value; let i = $index) {
+          <li
+            [id]="selectId + '-opt-' + i"
+            class="tl-select-option"
+            [class.is-selected]="option.value === selectedValue"
+            [class.is-focused]="focusedIndex === i"
+            [class.disabled]="option.disabled"
+            role="option"
+            [attr.aria-selected]="option.value === selectedValue"
+            [attr.aria-disabled]="option.disabled"
+            (click)="$event.stopPropagation(); selectOption(option, i)"
+          >
+            <span>{{ option.label }}</span>
 
-          @if (option.value === selectedValue) {
-            <tl-icon name="check"></tl-icon>
-          }
-        </li>
-      } @empty {
-        <li class="tl-select-empty">Invalid data</li>
-      }
-    </ul>
+            @if (option.value === selectedValue) {
+              <tl-icon class="tl-select-check" name="check" aria-hidden="true"></tl-icon>
+            }
+          </li>
+        } @empty {
+          <li class="tl-select-option-empty" role="presentation">Invalid data</li>
+        }
+      </ul>
+    </div>
   }
+
+  <div class="tl-select-info-area">
+    @if ((isError && errorMessage) || hint) {
+      <div class="tl-select-info-area">
+        @if (isError && errorMessage) {
+          <span [id]="selectId + '-error'" class="tl-select-error">
+            {{ errorMessage }}
+          </span>
+        } @else if (hint) {
+          <span [id]="selectId + '-hint'" class="tl-select-hint">
+            {{ hint }}
+          </span>
+        }
+      </div>
+    }
+  </div>
 </div>
