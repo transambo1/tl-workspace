@@ -1,4 +1,4 @@
-@import 'index';
+@use 'index' as *;
 
 :host {
     position: fixed;
@@ -18,6 +18,10 @@
     &.top-left {
         top: 20px;
         left: 20px;
+
+        .tl-toast-item {
+            animation-name: toastSlideInLeft;
+        }
     }
 
     &.bottom-right {
@@ -30,6 +34,10 @@
         bottom: 20px;
         left: 20px;
         flex-direction: column-reverse;
+
+        .tl-toast-item {
+            animation-name: toastSlideInLeft;
+        }
     }
 
     .tl-toast-item {
@@ -42,14 +50,20 @@
         box-shadow: var(--tl-sys-shadow-md);
         font-family: $tl-font-family;
         font-size: $tl-font-size-sm;
-        border: 1px solid var(--tl-sys-border); // Đắp thêm viền mảnh cho sang trọng
-        animation: toastSlideIn var(--tl-sys-motion-duration) cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
+        border: 1px solid var(--tl-sys-border);
+        @include sys-transition(all);
+        animation: toastSlideInRight var(--tl-sys-motion-duration) cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
 
         &.success {
             border-left: 4px solid var(--tl-sys-success);
 
             .tl-toast-icon {
                 color: var(--tl-sys-success);
+            }
+
+            &:hover {
+                background-color: color-mix(in srgb, var(--tl-sys-success) 8%, var(--tl-sys-surface));
+                border-color: color-mix(in srgb, var(--tl-sys-success) 10%, var(--tl-sys-border));
             }
         }
 
@@ -59,6 +73,11 @@
             .tl-toast-icon {
                 color: var(--tl-sys-error);
             }
+
+            &:hover {
+                background-color: color-mix(in srgb, var(--tl-sys-error) 8%, var(--tl-sys-surface));
+                border-color: color-mix(in srgb, var(--tl-sys-error) 20%, var(--tl-sys-border));
+            }
         }
 
         &.info {
@@ -66,6 +85,11 @@
 
             .tl-toast-icon {
                 color: var(--tl-sys-primary);
+            }
+
+            &:hover {
+                background-color: color-mix(in srgb, var(--tl-sys-primary) 8%, var(--tl-sys-surface));
+                border-color: color-mix(in srgb, var(--tl-sys-primary) 20%, var(--tl-sys-border));
             }
         }
 
@@ -75,13 +99,24 @@
             .tl-toast-icon {
                 color: var(--tl-sys-warning);
             }
+
+            &:hover {
+                background-color: color-mix(in srgb, var(--tl-sys-warning) 8%, var(--tl-sys-surface));
+                border-color: color-mix(in srgb, var(--tl-sys-warning) 20%, var(--tl-sys-border));
+            }
         }
+
+        &.hide {
+            animation: toastFadeOut 0.25s ease forwards;
+        }
+
+
     }
 
     .tl-toast-icon {
         @include flex-center;
         margin-right: 12px;
-        font-size: 18px; // Tăng size nhẹ để icon mảnh trông rõ nét hơn
+        font-size: 18px;
         width: 24px;
         height: 24px;
         flex-shrink: 0;
@@ -106,7 +141,7 @@
         flex-shrink: 0;
 
         &:hover {
-            color: var(--tl-sys-text-main);
+            color: var(--tl-sys-error);
         }
     }
 }
@@ -116,8 +151,8 @@
     justify-content: flex-end;
     width: 100%;
     margin-bottom: 4px;
-    animation: toastSlideIn var(--tl-sys-motion-duration) var(--tl-sys-motion-ease);
-    pointer-events: auto;
+    animation: toastSlideInRight var(--tl-sys-motion-duration) var(--tl-sys-motion-ease);
+    pointer-events: none;
 
     .tl-toast-btn-clear-all {
         @include sys-transition(all);
@@ -129,6 +164,7 @@
         font-weight: $tl-font-weight-semibold;
         color: var(--tl-sys-text-muted);
         cursor: pointer;
+        pointer-events: auto;
         box-shadow: var(--tl-sys-shadow-sm);
 
         &:hover {
@@ -144,7 +180,7 @@
     }
 }
 
-@keyframes toastSlideIn {
+@keyframes toastSlideInRight {
     from {
         transform: translateX(100%);
         opacity: 0;
@@ -153,5 +189,29 @@
     to {
         transform: translateX(0);
         opacity: 1;
+    }
+}
+
+@keyframes toastSlideInLeft {
+    from {
+        transform: translateX(-100%);
+        opacity: 0;
+    }
+
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+@keyframes toastFadeOut {
+    from {
+        transform: scale(1);
+        opacity: 1;
+    }
+
+    to {
+        transform: scale(0.9);
+        opacity: 0;
     }
 }

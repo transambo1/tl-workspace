@@ -5,7 +5,7 @@ export const TL_ICONS = {
   chevronLeft: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="tl-svg-icon"><path d="m15 18-6-6 6-6"/></svg>`,
   chevronRight: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="tl-svg-icon"><path d="m9 18 6-6-6-6"/></svg>`,
   chevronsLeft: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="tl-svg-icon"><path d="m11 17-5-5 5-5M18 17l-5-5 5-5"/></svg>`,
-  chevronsRight: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="tl-svg-icon"><path d="m6 17 5-5-5-5M13 17l-5-5 5-5"/></svg>`,
+  chevronsRight: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="tl-svg-icon"><path d="m6 17 5-5-5-5M13 17l5-5-5-5"/></svg>`,
 
   // Feedback & Status
   check: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="tl-svg-icon"><path d="M20 6 9 17l-5-5"/></svg>`,

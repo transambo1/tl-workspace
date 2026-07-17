@@ -1,8 +1,16 @@
-import { Component, ChangeDetectorRef } from '@angular/core';
+import {
+  Component,
+  ChangeDetectorRef,
+  OnDestroy,
+  ViewChildren,
+  QueryList,
+  ElementRef,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TlToast, ToastType } from './toast.component.type';
 import { TlIconComponent } from '../../icons/icon.component';
 import { generateUniqueId } from '../../utils';
+
 @Component({
   selector: 'tl-toast-container',
   standalone: true,
@@ -10,18 +18,25 @@ import { generateUniqueId } from '../../utils';
   templateUrl: './toast.component.html',
   styleUrl: './toast.component.scss',
 })
-export class ToastComponent {
+export class ToastComponent implements OnDestroy {
+  @ViewChildren('toastItem') toastElements!: QueryList<ElementRef<HTMLDivElement>>;
+
   toasts: TlToast[] = [];
   private toastQueue: TlToast[] = [];
   maxCount = 5;
 
   constructor(private cdr: ChangeDetectorRef) {}
 
+  ngOnDestroy() {
+    this.toasts.forEach((t) => {
+      if (t.timeoutId) clearTimeout(t.timeoutId);
+    });
+    this.toasts = [];
+    this.toastQueue = [];
+  }
+
   setMaxCount(count: number) {
     this.maxCount = count;
-  }
-  setPosition(pos: any) {
-    this.cdr.detectChanges();
   }
 
   add(type: ToastType, message: string, duration: number = 3000): string {
@@ -42,7 +57,19 @@ export class ToastComponent {
       this.cdr.detectChanges();
       this.startTimer(newToast);
     } else {
-      this.toastQueue.push(newToast);
+      // 3. PRIORITY QUEUE: Ưu tiên nhét các thông báo khẩn cấp (error, warning) lên đầu hàng đợi
+      if (type === 'error' || type === 'warning') {
+        const lastUrgentIdx = this.toastQueue.findIndex(
+          (t) => t.type !== 'error' && t.type !== 'warning',
+        );
+        if (lastUrgentIdx !== -1) {
+          this.toastQueue.splice(lastUrgentIdx, 0, newToast);
+        } else {
+          this.toastQueue.push(newToast);
+        }
+      } else {
+        this.toastQueue.push(newToast);
+      }
     }
 
     return id;
@@ -57,11 +84,13 @@ export class ToastComponent {
 
   pauseToast(toast: TlToast) {
     if (!toast.visible) return;
-    toast.isHovered = true;
-    if (toast.timeoutId) {
-      clearTimeout(toast.timeoutId);
-      if (toast.duration && toast.startTime) {
-        toast.duration -= Date.now() - toast.startTime;
+    if (!toast.isHovered) {
+      toast.isHovered = true;
+      if (toast.timeoutId) {
+        clearTimeout(toast.timeoutId);
+        if (toast.duration && toast.startTime) {
+          toast.duration -= Date.now() - toast.startTime;
+        }
       }
     }
   }
@@ -76,13 +105,27 @@ export class ToastComponent {
 
   closeManual(toast: TlToast) {
     toast.isHovered = false;
-    this.destroyToast(toast);
+
+    const toastsArray = this.toasts;
+    const deletedIdx = toastsArray.findIndex((t) => t.id === toast.id);
+
+    this.destroyToast(toast, () => {
+      setTimeout(() => {
+        const elements = this.toastElements.toArray();
+        if (elements.length === 0) return;
+
+        const targetIdx = deletedIdx < elements.length ? deletedIdx : elements.length - 1;
+        if (elements[targetIdx]) {
+          const closeBtn = elements[targetIdx].nativeElement.querySelector(
+            '.tl-toast-close',
+          ) as HTMLElement;
+          closeBtn?.focus();
+        }
+      }, 0);
+    });
   }
 
-  /**
-   *  THUẬT TOÁN ĐIỀU PHỐI HOÃN BINH BẰNG CSS ANIMATION
-   */
-  private destroyToast(toast: TlToast) {
+  private destroyToast(toast: TlToast, callback?: () => void) {
     if (toast.isHovered) return;
 
     if (toast.timeoutId) clearTimeout(toast.timeoutId);
@@ -93,11 +136,12 @@ export class ToastComponent {
       this.toasts = this.toasts.filter((t) => t.id !== toast.id);
       this.cdr.detectChanges();
       this.processQueue();
-    }, 150);
+      if (callback) callback();
+    }, 250);
   }
 
   private processQueue() {
-    if (this.toastQueue.length > 0 && this.toasts.length < this.maxCount) {
+    while (this.toastQueue.length > 0 && this.toasts.length < this.maxCount) {
       const nextToast = this.toastQueue.shift();
       if (nextToast) {
         this.toasts.push(nextToast);
@@ -117,6 +161,6 @@ export class ToastComponent {
     setTimeout(() => {
       this.toasts = [];
       this.cdr.detectChanges();
-    }, 150);
+    }, 250);
   }
 }

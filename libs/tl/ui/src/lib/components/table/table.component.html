@@ -4,34 +4,11 @@
   [style.max-width]="width"
   style="position: relative"
   role="region"
-  [attr.aria-label]="'Table container for ' + emptyMessage"
+  [attr.aria-label]="ariaLabel || 'Table data for ' + emptyMessage"
 >
   @if (loading) {
-    <div
-      class="tl-table-loading-overlay"
-      role="status"
-      aria-live="polite"
-      style="
-        position: absolute;
-        inset: 0;
-        background: rgba(255, 255, 255, 0.7);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        z-index: 10;
-      "
-    >
-      <div
-        class="tl-spinner"
-        style="
-          width: 32px;
-          height: 32px;
-          border: 3px solid #e2e8f0;
-          border-top-color: #3b82f6;
-          border-radius: 50%;
-          animation: tl-spin 0.8s linear infinite;
-        "
-      ></div>
+    <div class="tl-table-loading-overlay" role="status" aria-live="polite">
+      <div class="tl-spinner"></div>
       <span class="sr-only">Đang tải dữ liệu, vui lòng đợi...</span>
     </div>
   }
@@ -42,16 +19,18 @@
         @for (col of columnDefs; track col.name) {
           <th
             role="columnheader"
+            scope="col"
             [style.width]="col.width"
             [style.min-width]="col.width"
             [style.text-align]="col.align"
             [class.tl-sortable-header]="col.sortable"
+            [class.is-sorted]="sortState.key === col.name"
             [attr.aria-sort]="
               sortState.key === col.name
                 ? sortState.order === 'asc'
                   ? 'ascending'
                   : 'descending'
-                : 'none'
+                : null
             "
             [attr.tabindex]="col.sortable ? 0 : null"
             (click)="sort(col.name, col.sortable)"
@@ -81,16 +60,8 @@
                       [name]="sortState.order === 'asc' ? 'chevronUp' : 'chevronDown'"
                     ></tl-icon>
                   } @else {
-                    <tl-icon name="sort"></tl-icon>
+                    <tl-icon name="sort" class="tl-sort-idle-icon"></tl-icon>
                   }
-                </span>
-                <span class="sr-only">
-                  {{ col.name }}, nút bấm sắp xếp.
-                  {{
-                    sortState.key === col.name
-                      ? 'Đang sắp xếp ' + (sortState.order === 'asc' ? 'tăng dần' : 'giảm dần')
-                      : 'Chưa sắp xếp'
-                  }}
                 </span>
               }
             </div>
@@ -130,13 +101,14 @@
         </tr>
       } @empty {
         <tr role="row">
-          <td
-            [attr.colspan]="columnDefs.length"
-            class="tl-table-empty-state"
-            role="gridcell"
-            aria-live="polite"
-          >
-            {{ emptyMessage }}
+          <td [colSpan]="columnDefs.length" class="tl-table-empty-state" role="gridcell">
+            <div class="tl-empty-content">
+              <tl-icon
+                name="info"
+                style="font-size: 32px; color: var(--tl-sys-text-disabled); margin-bottom: 8px"
+              ></tl-icon>
+              <span>{{ emptyMessage }}</span>
+            </div>
           </td>
         </tr>
       }

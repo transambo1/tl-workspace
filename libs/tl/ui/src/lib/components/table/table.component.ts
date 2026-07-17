@@ -32,14 +32,7 @@ export type TlSortOrder = 'asc' | 'desc' | '';
 @Component({
   selector: 'tl-table',
   standalone: true,
-  imports: [
-    CommonModule,
-    TlColumnDefDirective,
-    TlCellDefDirective,
-    TlHeaderCellDefDirective,
-    TlTruncateTooltipDirective,
-    TlIconComponent,
-  ],
+  imports: [CommonModule, TlTruncateTooltipDirective, TlIconComponent],
   templateUrl: './table.component.html',
   styleUrls: ['./table.component.scss'],
   encapsulation: ViewEncapsulation.Emulated,
@@ -53,6 +46,7 @@ export class TlTableComponent<T extends TlTableRow> implements OnChanges, OnInit
   // ================= INPUTS =================
   @Input() loading = false;
   @Input() dataSource: T[] = [];
+  @Input() ariaLabel = '';
 
   @Input()
   set filterValue(value: string) {
@@ -186,10 +180,10 @@ export class TlTableComponent<T extends TlTableRow> implements OnChanges, OnInit
       return;
     }
 
-    // ✨ HOÀN HẢO: Gọi deepClone bảo hiểm ô nhớ cho dataSource trước khi xử lý lọc/sắp xếp
-    let result = deepClone(this.dataSource);
+    let result = [...this.dataSource];
     result = this.applyFilter(result);
     result = this.applySort(result);
+
     this.processedData = result;
 
     if (this.pagination) {

@@ -1,4 +1,4 @@
-@import 'index'; // Giữ lại kết nối với Design System gốc của chú
+@use 'index' as *; // Giữ lại kết nối với Design System gốc của chú
 
 :host {
     display: block;

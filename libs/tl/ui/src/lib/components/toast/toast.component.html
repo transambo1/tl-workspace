@@ -1,15 +1,25 @@
 @if (toasts.length >= 3) {
   <div class="tl-toast-clear-all-wrapper">
-    <button class="tl-toast-btn-clear-all" (click)="clearAll()">Remove all</button>
+    <button
+      class="tl-toast-btn-clear-all"
+      aria-label="Remove all active notifications"
+      (click)="clearAll()"
+    >
+      Remove all
+    </button>
   </div>
 }
 
 @for (toast of toasts; track toast.id) {
   <div
     class="tl-toast-item"
+    [attr.role]="toast.type === 'error' || toast.type === 'warning' ? 'alert' : 'status'"
+    [attr.aria-live]="toast.type === 'error' || toast.type === 'warning' ? 'assertive' : 'polite'"
     [ngClass]="[toast.type, toast.visible ? 'show' : 'hide']"
     (mouseenter)="pauseToast(toast)"
     (mouseleave)="resumeToast(toast)"
+    (focusin)="pauseToast(toast)"
+    (focusout)="resumeToast(toast)"
   >
     <span class="tl-toast-icon">
       @if (toast.type === 'success') {
@@ -28,6 +38,12 @@
 
     <span class="tl-toast-message">{{ toast.message }}</span>
 
-    <button class="tl-toast-close" (click)="closeManual(toast)">✕</button>
+    <button
+      class="tl-toast-close"
+      [attr.aria-label]="'Close ' + toast.type + ' notification'"
+      (click)="closeManual(toast)"
+    >
+      <tl-icon name="close"></tl-icon>
+    </button>
   </div>
 }
